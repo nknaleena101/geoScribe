@@ -18,6 +18,9 @@ exports.createJournal = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+  if (!title || !latitude || !longitude) {
+  return res.status(400).json({ error: "Title, Latitude, and Longitude are required!" });
+}
 };
 
 // 2. Get All Journals

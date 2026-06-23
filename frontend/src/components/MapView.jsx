@@ -1,9 +1,20 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 
-export default function MapView({ journals }) {
-  // Default center (Sri Lanka වගේ center එකක් ගමු)
-  const defaultCenter = [7.8731, 80.7718]; 
+// Map එක Click කරනකොට Coordinates අල්ලගන්න Helper Component එක
+function MapClickHandler({ onMapClick }) {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      // Parent Component (App.jsx) එකෙන් ලැබුන Function එකට Coordinates ටික යවනවා
+      onMapClick(lat, lng); 
+    },
+  });
+  return null;
+}
+
+export default function MapView({ journals, onMapClick }) {
+  const defaultCenter = [7.8731, 80.7718]; // Sri Lanka Center
 
   return (
     <div className="map-container">
@@ -12,6 +23,10 @@ export default function MapView({ journals }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        
+        {/* Click Handler එක Map Container එක ඇතුලට දානවා */}
+        <MapClickHandler onMapClick={onMapClick} />
+
         {journals.map((journal) => (
           <Marker key={journal.id} position={[parseFloat(journal.latitude), parseFloat(journal.longitude)]}>
             <Popup>
