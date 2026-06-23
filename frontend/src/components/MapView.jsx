@@ -1,20 +1,36 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 
-// Map එක Click කරනකොට Coordinates අල්ලගන්න Helper Component එක
+// Map Click එක අල්ලගන්න Component එක
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click: (e) => {
       const { lat, lng } = e.latlng;
-      // Parent Component (App.jsx) එකෙන් ලැබුන Function එකට Coordinates ටික යවනවා
       onMapClick(lat, lng); 
     },
   });
   return null;
 }
 
-export default function MapView({ journals, onMapClick }) {
-  const defaultCenter = [7.8731, 80.7718]; // Sri Lanka Center
+// Active Coordinates වෙනස් වෙද්දි Smooth Fly වෙන්න හදන Component එක (Frontend Flex!)
+function RecenterMap({ activeCoords }) {
+  const map = useMap(); // Leaflet map instance එක ගන්නවා
+
+  useEffect(() => {
+    if (activeCoords) {
+      // map.flyTo([lat, lng], zoomLevel, { animation options })
+      map.flyTo([activeCoords.lat, activeCoords.lng], 12, {
+        animate: true,
+        duration: 1.5 // තත්පර ගණන (Smooth වෙන්න 1.5ක් වගේ හොඳයි)
+      });
+    }
+  }, [activeCoords, map]);
+
+  return null;
+}
+
+export default function MapView({ journals, onMapClick, activeCoords }) {
+  const defaultCenter = [7.8731, 80.7718]; 
 
   return (
     <div className="map-container">
@@ -24,8 +40,10 @@ export default function MapView({ journals, onMapClick }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
-        {/* Click Handler එක Map Container එක ඇතුලට දානවා */}
         <MapClickHandler onMapClick={onMapClick} />
+        
+        {/* Active Coords වෙනස් වෙද්දි Fly වෙන එක මෙතනින් සිදු වෙනවා */}
+        <RecenterMap activeCoords={activeCoords} />
 
         {journals.map((journal) => (
           <Marker key={journal.id} position={[parseFloat(journal.latitude), parseFloat(journal.longitude)]}>
