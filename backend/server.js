@@ -13,7 +13,7 @@ app.use(express.json());
 // Routes
 app.use('/api', journalRoutes);
 
-// DB Table Initialization
+// Database Table Auto-Initialization
 const initDB = async () => {
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS journals (
@@ -27,7 +27,7 @@ const initDB = async () => {
   `;
   try {
     await pool.query(createTableQuery);
-    console.log("PostgreSQL Table Ready with PostGIS support.");
+    console.log("PostgreSQL Table Ready with PostGIS support. 🎉");
   } catch (err) {
     console.error("Error creating table:", err);
   }
