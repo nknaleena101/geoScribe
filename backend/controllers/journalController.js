@@ -63,3 +63,43 @@ exports.getNearbyJournals = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// 4. Delete a Journal Entry
+exports.deleteJournal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteQuery = `DELETE FROM journals WHERE id = $1 RETURNING *;`;
+    const result = await pool.query(deleteQuery, [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Journal entry not found!" });
+    }
+
+    res.status(200).json({ message: "Journal entry deleted successfully!", deletedJournal: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+// 5. Update a Journal Entry Description/Title
+exports.updateJournal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body;
+
+    const updateQuery = `
+      UPDATE journals 
+      SET title = $1, content = $2 
+      WHERE id = $3 
+      RETURNING *;
+    `;
+    
+    const result = await pool.query(updateQuery, [title, content, id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Journal entry not found!" });
+    }
+
+    res.status(200).json({ message: "Journal updated successfully!", updatedJournal: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
