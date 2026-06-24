@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import MapView from './components/MapView';
 import JournalForm from './components/JournalForm';
+import { motion } from 'framer-motion';
 
 export default function App() {
   const [journals, setJournals] = useState([]);
@@ -49,8 +50,8 @@ export default function App() {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:5000/api/journals/${id}`, editForm);
-      setEditingId(null); // hide Edit mode 
-      fetchJournals(); // refresh the app and get the new data
+      setEditingId(null);
+      fetchJournals();
     } catch (err) {
       console.error("Error updating journal:", err);
     }
@@ -62,44 +63,75 @@ export default function App() {
   };
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* Top Header */}
-      <header className="app-header">
-        GeoScribe 📍 <span style={{ fontWeight: 400, marginLeft: 8, fontSize: 16, color: '#64748b' }}>Interactive Spatial Journal</span>
-      </header>
+      <motion.header 
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="app-header"
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span className="brand-font" style={{ fontSize: '36px', marginRight: '10px' }}>GeoScribe</span>
+          <span style={{ fontSize: '14px', fontWeight: 500, color: '#64748b', marginTop: '6px' }}>Interactive Spatial Journal</span>
+        </div>
+      </motion.header>
 
       {/* Top Proximity Search Bar */}
-      <div className="search-container">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="search-container"
+      >
         <form onSubmit={handleProximitySearch} style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%' }}>
-          <span style={{ fontSize: '14px', fontWeight: '600' }}>PostGIS Proximity:</span>
-          <input type="number" placeholder="Distance (km)" value={searchParams.distance} onChange={e => setSearchParams({ ...searchParams, distance: e.target.value })} style={{ width: '110px', padding: '6px 10px' }} />
-          <span style={{ fontSize: '14px' }}>within radius of</span>
-          <input type="number" step="any" placeholder="Lat" value={searchParams.lat} onChange={e => setSearchParams({ ...searchParams, lat: e.target.value })} style={{ width: '120px', padding: '6px 10px' }} />
-          <input type="number" step="any" placeholder="Lng" value={searchParams.lng} onChange={e => setSearchParams({ ...searchParams, lng: e.target.value })} style={{ width: '120px', padding: '6px 10px' }} />
-          <button type="submit" style={{ background: '#10b981', color: 'white', border: 'none', padding: '7px 15px', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>Search</button>
-          <button type="button" onClick={fetchJournals} style={{ background: '#64748b', color: 'white', border: 'none', padding: '7px 15px', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>Reset</button>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#475569' }}>PostGIS Proximity:</span>
+          <input className="search-input" type="number" placeholder="Distance (km)" value={searchParams.distance} onChange={e => setSearchParams({ ...searchParams, distance: e.target.value })} style={{ width: '120px' }} />
+          <span style={{ fontSize: '14px', color: '#64748b' }}>within radius of</span>
+          <input className="search-input" type="number" step="any" placeholder="Lat" value={searchParams.lat} onChange={e => setSearchParams({ ...searchParams, lat: e.target.value })} style={{ width: '130px' }} />
+          <input className="search-input" type="number" step="any" placeholder="Lng" value={searchParams.lng} onChange={e => setSearchParams({ ...searchParams, lng: e.target.value })} style={{ width: '130px' }} />
+          <button type="submit" className="btn-primary">Search</button>
+          <button type="button" onClick={fetchJournals} className="btn-secondary">Reset</button>
         </form>
-      </div>
+      </motion.div>
 
       {/* 3-Column Dashboard Section */}
       <main className="main-dashboard">
 
         {/* COLUMN 1: LEFT SIDE (Smaller Form) */}
-        <section className="column-card">
+        <motion.section 
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="column-card"
+        >
           <JournalForm onJournalAdded={fetchJournals} selectedCoords={selectedCoords} />
-        </section>
+        </motion.section>
 
         {/* COLUMN 2: MIDDLE (Bigger Map Section) */}
-        <section className="map-column">
+        <motion.section 
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="map-column"
+        >
           <MapView journals={journals} onMapClick={handleMapClick} activeCoords={activeCoords} />
-        </section>
+        </motion.section>
 
         {/* COLUMN 3: RIGHT SIDE (Travel Timeline Cards with Edit Mode) */}
-        <section className="column-card">
-          <h3 style={{ fontSize: '18px', borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>Travel Timeline</h3>
+        <motion.section 
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="column-card"
+        >
+          <h3 style={{ fontSize: '28px', borderBottom: '1px solid #f1f5f9', paddingBottom: '16px', marginBottom: '8px' }}>Travel Timeline</h3>
           <div className="timeline-list">
-            {journals.map((journal) => (
-              <div
+            {journals.map((journal, index) => (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 * index }}
                 key={journal.id}
                 className="journal-card"
                 onClick={() => editingId !== journal.id && handleCardClick(journal.latitude, journal.longitude)}
@@ -108,54 +140,52 @@ export default function App() {
                 {journal.media_url ? (
                   <img src={journal.media_url} alt={journal.title} className="card-image" />
                 ) : (
-                  <div style={{ height: '100px', background: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '12px' }}>No Image Included</div>
+                  <div style={{ height: '140px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '13px' }}>No Image Included</div>
                 )}
 
                 <div className="card-content">
                   {editingId === journal.id ? (
-                    /* EDIT MODE ON */
-                    <form onSubmit={(e) => handleUpdateSubmit(e, journal.id)} onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <form onSubmit={(e) => handleUpdateSubmit(e, journal.id)} onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <input
                         type="text"
                         value={editForm.title}
                         onChange={e => setEditForm({ ...editForm, title: e.target.value })}
                         required
-                        style={{ padding: '4px 8px' }}
                       />
                       <textarea
                         value={editForm.content}
                         onChange={e => setEditForm({ ...editForm, content: e.target.value })}
-                        style={{ padding: '4px 8px', height: '60px' }}
+                        style={{ height: '80px', resize: 'none' }}
                       />
-                      <div style={{ display: 'flex', gap: '5px' }}>
-                        <button type="submit" style={{ background: '#10b981', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>Save</button>
-                        <button type="button" onClick={() => setEditingId(null)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>Cancel</button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button type="submit" className="btn-primary" style={{ padding: '6px 12px', flex: 1 }}>Save</button>
+                        <button type="button" onClick={() => setEditingId(null)} className="btn-secondary" style={{ padding: '6px 12px', flex: 1 }}>Cancel</button>
                       </div>
                     </form>
                   ) : (
-                    /* EDIT MODE OFF*/
                     <>
                       <h4>{journal.title}</h4>
                       <p>{journal.content}</p>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                        <small>📍 {parseFloat(journal.latitude).toFixed(4)}, {parseFloat(journal.longitude).toFixed(4)}</small>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+                        <span className="pill-badge">📍 {parseFloat(journal.latitude).toFixed(3)}, {parseFloat(journal.longitude).toFixed(3)}</span>
                         <button
                           onClick={(e) => {
-                            e.stopPropagation(); // stop Card click 
+                            e.stopPropagation();
                             startEditing(journal);
                           }}
-                          style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                          className="btn-secondary"
+                          style={{ padding: '6px 12px', fontSize: '12px' }}
                         >
-                          Edit Description
+                          Edit
                         </button>
                       </div>
                     </>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
       </main>
     </div>
