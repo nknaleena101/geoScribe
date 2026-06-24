@@ -15,9 +15,17 @@ app.use('/api', journalRoutes);
 
 // Database Table Auto-Initialization
 const initDB = async () => {
-  const createTableQuery = `
+  const createTablesQuery = `
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS journals (
       id SERIAL PRIMARY KEY,
+      user_id INT REFERENCES users(id) ON DELETE CASCADE, -- User කෙනෙක් අයින් කලොත් journals අයින් වෙන්න
       title VARCHAR(255) NOT NULL,
       content TEXT,
       media_url TEXT,
@@ -26,10 +34,10 @@ const initDB = async () => {
     );
   `;
   try {
-    await pool.query(createTableQuery);
-    console.log("PostgreSQL Table Ready with PostGIS support. 🎉");
+    await pool.query(createTablesQuery);
+    console.log("PostgreSQL Tables Ready with Auth support.");
   } catch (err) {
-    console.error("Error creating table:", err);
+    console.error("Error creating tables:", err);
   }
 };
 
