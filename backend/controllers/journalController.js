@@ -47,35 +47,30 @@ exports.signIn = async (req, res) => {
 exports.createJournal = async (req, res) => {
   try {
     const { title, content, media_url, latitude, longitude } = req.body;
-    
+
     const query = `
-      INSERT INTO journals (title, content, media_url, location)
+      INSERT INTO journals (user_id, title, content, media_url, location)
       VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326))
       RETURNING *, ST_AsText(location) as location_text;
     `;
-    
-    const values = [title, content, media_url, longitude, latitude];
+
+    const values = [req.userId, title, content, media_url, longitude, latitude];
     const newJournal = await pool.query(query, values);
-    
+
     res.status(201).json(newJournal.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
   if (!title || !latitude || !longitude) {
-  return res.status(400).json({ error: "Title, Latitude, and Longitude are required!" });
-}
+    return res.status(400).json({ error: "Title, Latitude, and Longitude are required!" });
+  }
 };
 
 // 4. Get All Journals
 exports.getAllJournals = async (req, res) => {
   try {
-    const query = `
-      SELECT id, title, content, media_url, created_at,
-             ST_Y(location::geometry) as latitude,
-             ST_X(location::geometry) as longitude
-      FROM journals;
-    `;
-    const journals = await pool.query(query);
+    const query = `SELECT id, title, content, media_url, ST_Y(location::geometry) as latitude, ST_X(location::geometry) as longitude FROM journals WHERE user_id = $1;`;
+    const journals = await pool.query(query, [req.userId]);
     res.status(200).json(journals.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -86,7 +81,7 @@ exports.getAllJournals = async (req, res) => {
 exports.getNearbyJournals = async (req, res) => {
   try {
     const { lat, lng, distanceKm } = req.query;
-    
+
     const query = `
       SELECT id, title, content, media_url,
              ST_Y(location::geometry) as latitude,
@@ -98,7 +93,7 @@ exports.getNearbyJournals = async (req, res) => {
         $3 * 1000
       );
     `;
-    
+
     const values = [lng, lat, distanceKm];
     const journals = await pool.query(query, values);
     res.status(200).json(journals.rows);
@@ -134,7 +129,7 @@ exports.updateJournal = async (req, res) => {
       WHERE id = $3 
       RETURNING *;
     `;
-    
+
     const result = await pool.query(updateQuery, [title, content, id]);
 
     if (result.rowCount === 0) {

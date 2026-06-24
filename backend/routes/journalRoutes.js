@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const journalController = require('../controllers/journalController');
+const auth = require('../middleware/authMiddleware');
 
-router.post('/journals', journalController.createJournal);
-router.get('/journals', journalController.getAllJournals);
-router.get('/journals/search', journalController.getNearbyJournals);
-router.delete('/journals/:id', journalController.deleteJournal);
-router.put('/journals/:id', journalController.updateJournal);
+router.post('/journals', auth, journalController.createJournal);
+router.get('/journals', auth, journalController.getAllJournals);
+router.get('/journals/search', auth, journalController.getNearbyJournals);
+router.delete('/journals/:id', auth, journalController.deleteJournal);
+router.put('/journals/:id', auth, journalController.updateJournal);
 
 module.exports = router;
