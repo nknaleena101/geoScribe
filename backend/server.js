@@ -3,6 +3,7 @@ const cors = require('cors');
 const pool = require('./config/db');
 const journalRoutes = require('./routes/journalRoutes');
 require('dotenv').config();
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -12,6 +13,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api', journalRoutes);
+
+app.use('/api/auth', authRoutes);
 
 // Database Table Auto-Initialization
 const initDB = async () => {

@@ -82,6 +82,10 @@ exports.getNearbyJournals = async (req, res) => {
   try {
     const { lat, lng, distanceKm } = req.query;
 
+    if (!lat || !lng || !distanceKm) {
+      return res.status(400).json({ error: "Latitude, Longitude, and Distance are required!" });
+    }
+
     const query = `
       SELECT id, title, content, media_url,
              ST_Y(location::geometry) as latitude,
@@ -91,16 +95,18 @@ exports.getNearbyJournals = async (req, res) => {
         location,
         ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
         $3 * 1000
-      );
+      ) AND user_id = $4;
     `;
 
-    const values = [lng, lat, distanceKm];
+    const values = [lng, lat, distanceKm, req.userId];
     const journals = await pool.query(query, values);
+    
     res.status(200).json(journals.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 // 6. Delete a Journal Entry
 exports.deleteJournal = async (req, res) => {
   try {
