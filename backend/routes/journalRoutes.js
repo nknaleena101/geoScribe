@@ -6,7 +6,7 @@ const auth = require('../middleware/authMiddleware');
 router.post('/journals', auth, journalController.createJournal);
 router.get('/journals', auth, journalController.getAllJournals);
 router.get('/journals/search', auth, journalController.getNearbyJournals);
-router.delete('/journals/:id', journalController.deleteJournal);
-router.put('/journals/:id', journalController.updateJournal);
+router.delete('/journals/:id', auth, journalController.deleteJournal);
+router.put('/journals/:id', auth, journalController.updateJournal);
 
 module.exports = router;
