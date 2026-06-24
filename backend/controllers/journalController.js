@@ -6,22 +6,23 @@ const jwt = require('jsonwebtoken');
 exports.createJournal = async (req, res) => {
   try {
     const { title, content, media_url, latitude, longitude } = req.body;
+    
+    if (!title || !latitude || !longitude) {
+      return res.status(400).json({ error: "Title, Latitude, and Longitude are required!" });
+    }
 
     const query = `
       INSERT INTO journals (user_id, title, content, media_url, location)
-      VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326))
+      VALUES ($1, $2, $3, $4, ST_SetSRID(ST_MakePoint($5, $6), 4326))
       RETURNING *, ST_AsText(location) as location_text;
     `;
-
+    
     const values = [req.userId, title, content, media_url, longitude, latitude];
+    
     const newJournal = await pool.query(query, values);
-
     res.status(201).json(newJournal.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-  if (!title || !latitude || !longitude) {
-    return res.status(400).json({ error: "Title, Latitude, and Longitude are required!" });
   }
 };
 

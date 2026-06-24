@@ -64,11 +64,11 @@ export default function App() {
       <div style={{ background: '#e9ecef', padding: '15px', margin: '20px', borderRadius: '8px' }}>
         <form onSubmit={handleProximitySearch} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <strong>Find Journals Within:</strong>
-          <input type="number" placeholder="Distance (km)" value={searchParams.distance} onChange={e => setSearchParams({...searchParams, distance: e.target.value})} style={{ width: '80px' }} />
+          <input type="number" placeholder="Distance (km)" value={searchParams.distance} onChange={e => setSearchParams({ ...searchParams, distance: e.target.value })} style={{ width: '80px' }} />
           <span>of Lat:</span>
-          <input type="number" step="any" placeholder="Lat" value={searchParams.lat} onChange={e => setSearchParams({...searchParams, lat: e.target.value})} />
+          <input type="number" step="any" placeholder="Lat" value={searchParams.lat} onChange={e => setSearchParams({ ...searchParams, lat: e.target.value })} />
           <span>& Lng:</span>
-          <input type="number" step="any" placeholder="Lng" value={searchParams.lng} onChange={e => setSearchParams({...searchParams, lng: e.target.value})} />
+          <input type="number" step="any" placeholder="Lng" value={searchParams.lng} onChange={e => setSearchParams({ ...searchParams, lng: e.target.value })} />
           <button type="submit" style={{ background: '#28a745', color: 'white', border: 'none', padding: '5px 15px', cursor: 'pointer' }}>Search</button>
           <button type="button" onClick={fetchJournals} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '5px 15px', cursor: 'pointer' }}>Reset Map</button>
         </form>
@@ -76,7 +76,11 @@ export default function App() {
 
       <div className="dashboard">
         <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px' }}>
-          <JournalForm onJournalAdded={fetchJournals} selectedCoords={selectedCoords} />
+          <JournalForm
+            onJournalAdded={fetchJournals}
+            selectedCoords={selectedCoords}
+            token={token}
+          />
         </div>
         <div>
           <MapView journals={journals} onMapClick={(lat, lng) => setSelectedCoords({ lat, lng })} activeCoords={activeCoords} />
