@@ -15,7 +15,7 @@ export default function App() {
 
   const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${token}` } });
 
-  // Fetch journals - Now works for everyone (Public)
+  // Fetch journals - Works for everyone (Public)
   const fetchJournals = async () => {
     try {
       const res = await axios.get('http://localhost:5000/api/journals');
@@ -57,16 +57,15 @@ export default function App() {
 
       {/* Auth Screen as an overlay if not logged in but wants to */}
       {showAuthModal && (
-      <div style={{ position: 'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ background: 'white', padding: '20px', borderRadius: '8px', position: 'relative' }}>
-          <button onClick={() => setShowAuthModal(false)} style={{ position: 'absolute', top: '10px', right: '10px', background: '#none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>❌</button>
-          <Auth onLoginSuccess={handleLoginSuccess} />
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ background: 'white', padding: '20px', borderRadius: '8px', position: 'relative' }}>
+            <button onClick={() => setShowAuthModal(false)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>❌</button>
+            <Auth onLoginSuccess={handleLoginSuccess} />
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-      {/* Proximity Search (Available for everyone) */}
-      {/* Proximity Search (Make sure e.preventDefault() is there!) */}
+      {/* Proximity Search (Hidden Form kept for backend tracking) */}
       <form onSubmit={(e) => {
         e.preventDefault();
         axios.get(`http://localhost:5000/api/journals/search`, { params: { lat: searchParams.lat, lng: searchParams.lng, distanceKm: searchParams.distance } })
@@ -101,12 +100,16 @@ export default function App() {
             {journals.map((journal) => (
               <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer' }}>
                 {journal.media_url ? <img src={journal.media_url} alt={journal.title} className="card-image" /> : <div style={{ height: '180px', background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Image</div>}
+                
+                {/* Updated Card Content Block to display creator_name */}
                 <div className="card-content">
-                  <span style={{ background: '#6c757d', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>By: {journal.creator_email}</span>
+                  <span style={{ background: '#6c757d', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
+                    By: {journal.creator_name || "Unknown"}
+                  </span>
                   <h4 style={{ marginTop: '8px' }}>{journal.title}</h4>
                   <p style={{ color: '#555', fontSize: '14px' }}>{journal.content}</p>
 
-                  {/* 💡 Frontend Flex: Only show edit option if the pin belongs to the logged-in user */}
+                  {/* Only show edit option if the pin belongs to the logged-in user */}
                   {token && parseInt(currentUserId) === journal.user_id && (
                     <button onClick={(e) => {
                       e.stopPropagation(); // Prevents map flying when clicking edit
@@ -118,6 +121,7 @@ export default function App() {
                     }} style={{ background: '#ffc107', color: 'black', border: 'none', padding: '3px 8px', cursor: 'pointer', marginTop: '10px', borderRadius: '4px', fontSize: '12px' }}>Edit Title</button>
                   )}
                 </div>
+
               </div>
             ))}
           </div>
