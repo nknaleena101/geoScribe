@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 
-// Map Click එක අල්ලගන්න Component එක
+// Component to handle map click events and pass coordinates up
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click: (e) => {
@@ -12,16 +12,15 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
-// Active Coordinates වෙනස් වෙද්දි Smooth Fly වෙන්න හදන Component එක (Frontend Flex!)
+// Component to handle smooth camera flights when activeCoords change
 function RecenterMap({ activeCoords }) {
-  const map = useMap(); // Leaflet map instance එක ගන්නවා
+  const map = useMap();
 
   useEffect(() => {
     if (activeCoords) {
-      // map.flyTo([lat, lng], zoomLevel, { animation options })
       map.flyTo([activeCoords.lat, activeCoords.lng], 12, {
         animate: true,
-        duration: 1.5 // තත්පර ගණන (Smooth වෙන්න 1.5ක් වගේ හොඳයි)
+        duration: 1.5
       });
     }
   }, [activeCoords, map]);
@@ -30,7 +29,7 @@ function RecenterMap({ activeCoords }) {
 }
 
 export default function MapView({ journals, onMapClick, activeCoords }) {
-  const defaultCenter = [7.8731, 80.7718]; 
+  const defaultCenter = [7.8731, 80.7718]; // Sri Lanka Center
 
   return (
     <div className="map-container">
@@ -41,17 +40,22 @@ export default function MapView({ journals, onMapClick, activeCoords }) {
         />
         
         <MapClickHandler onMapClick={onMapClick} />
-        
-        {/* Active Coords වෙනස් වෙද්දි Fly වෙන එක මෙතනින් සිදු වෙනවා */}
         <RecenterMap activeCoords={activeCoords} />
 
         {journals.map((journal) => (
           <Marker key={journal.id} position={[parseFloat(journal.latitude), parseFloat(journal.longitude)]}>
             <Popup>
-              <div>
-                {journal.media_url && <img src={journal.media_url} alt={journal.title} style={{ width: '100%', borderRadius: '4px' }} />}
-                <h4>{journal.title}</h4>
-                <p>{journal.content}</p>
+              <div style={{ minWidth: '150px' }}>
+                {/* 💡 Added: Displaying the creator's name inside the Map Popup */}
+                <span style={{ background: '#007bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold', display: 'inline-block', marginBottom: '5px' }}>
+                  By: {journal.creator_name || "Unknown"}
+                </span>
+                
+                {journal.media_url && (
+                  <img src={journal.media_url} alt={journal.title} style={{ width: '100%', borderRadius: '4px', marginTop: '5px' }} />
+                )}
+                <h4 style={{ margin: '5px 0 2px 0' }}>{journal.title}</h4>
+                <p style={{ margin: '0', color: '#555', fontSize: '12px' }}>{journal.content}</p>
               </div>
             </Popup>
           </Marker>
