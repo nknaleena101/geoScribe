@@ -146,7 +146,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 }
 
 .map-container {
-  height: 70vh; 
+  height: 100%; 
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
@@ -228,4 +228,64 @@ form input:focus, form textarea:focus {
   font-weight: 500;
   display: inline-flex;
   align-items: center;
+}
+
+/* =================================================================*********
+   RESPONSIVENESS / MEDIA QUERIES
+   =================================================================********* */
+
+/* Laptops / Smaller Desktops */
+@media (max-width: 1200px) {
+  .main-dashboard {
+    grid-template-columns: 300px 1fr 300px;
+    gap: 16px;
+    padding: 20px;
+  }
+}
+
+/* Tablets (Portrait & Landscape) */
+@media (max-width: 992px) {
+  /* Give body back its scroll so it's not trapped on mobile/tablet */
+  body {
+    overflow: auto;
+  }
+
+  .main-dashboard {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 146px);
+  }
+
+  .map-column {
+    height: 50vh; /* Give map a fixed height on tablet */
+    min-height: 400px;
+  }
+
+  .column-card {
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+/* Mobile Screens */
+@media (max-width: 600px) {
+  .main-dashboard {
+    padding: 15px 10px;
+    gap: 15px;
+  }
+
+  .map-column {
+    height: 45vh;
+    min-height: 300px;
+    border-radius: 12px;
+  }
+
+  .column-card {
+    padding: 16px;
+  }
+
+  .card-content h4 {
+    font-size: 20px;
+  }
 }
