@@ -48,3 +48,23 @@ exports.signIn = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// 3. Update User Profile Name (Protected - Requires Auth)
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: "Name is required" });
+
+    // req.userId comes from the auth middleware
+    const query = `UPDATE users SET name = $1 WHERE id = $2 RETURNING id, name, email;`;
+    const updatedUser = await pool.query(query, [name, req.userId]);
+
+    if (updatedUser.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(updatedUser.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
