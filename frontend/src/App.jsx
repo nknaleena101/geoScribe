@@ -3,7 +3,8 @@ import axios from 'axios';
 import MapView from './components/MapView';
 import JournalForm from './components/JournalForm';
 import Auth from './components/Auth';
-import EditModal from './components/EditModal'; // Imported our new modal
+import EditModal from './components/EditModal';
+import ProfileModal from './components/ProfileModal'; // 👈 Imported our new ProfileModal
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -13,9 +14,11 @@ export default function App() {
   const [activeCoords, setActiveCoords] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // New States for Notification and Popup Modal
   const [notification, setNotification] = useState('');
   const [editingJournal, setEditingJournal] = useState(null);
+  
+  // New State to control Profile Modal visibility
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${token}` } });
 
@@ -28,13 +31,11 @@ export default function App() {
     }
   };
 
-  // Custom Notification Trigger
   const triggerNotification = (message) => {
     setNotification(message);
-    setTimeout(() => setNotification(''), 4000); // Auto hide after 4 seconds
+    setTimeout(() => setNotification(''), 4000);
   };
 
-  // Delete Action Handler
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this pin?")) {
       try {
@@ -75,7 +76,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Edit Popup Modal */}
+      {/* Edit Journey Popup Modal */}
       {editingJournal && (
         <EditModal 
           journal={editingJournal} 
@@ -89,14 +90,38 @@ export default function App() {
         />
       )}
 
-      {/* Navbar */}
+      {/* Profile Settings Popup Modal */}
+      {showProfileModal && (
+        <ProfileModal 
+          token={token}
+          onClose={() => setShowProfileModal(false)}
+          onProfileUpdate={() => {
+            triggerNotification("👤 Profile name updated successfully!");
+            fetchJournals(); // Refresh timeline list to display the new name
+          }}
+        />
+      )}
+
+      {/* Navbar with Profile Icon Trigger */}
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 20px', background: '#343a40', color: 'white', alignItems: 'center' }}>
         <h2>GeoScribe 📍</h2>
-        {token ? (
-          <button onClick={handleLogout} style={{ background: '#dc3545', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px' }}>Logout</button>
-        ) : (
-          <button onClick={() => setShowAuthModal(true)} style={{ background: '#007bff', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px' }}>Sign In to Drop Pins</button>
-        )}
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          {token ? (
+            <>
+              {/* 💡 Profile Icon Button */}
+              <button 
+                onClick={() => setShowProfileModal(true)} 
+                style={{ background: 'none', border: 'none', color: 'white', fontSize: '20px', cursor: 'pointer' }}
+                title="Edit Profile"
+              >
+                👤
+              </button>
+              <button onClick={handleLogout} style={{ background: '#dc3545', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px' }}>Logout</button>
+            </>
+          ) : (
+            <button onClick={() => setShowAuthModal(true)} style={{ background: '#007bff', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px' }}>Sign In to Drop Pins</button>
+          )}
+        </div>
       </div>
 
       {/* Auth Screen Modal */}
@@ -109,12 +134,20 @@ export default function App() {
         </div>
       )}
 
+      {/* Hidden Proximity Search Tracker */}
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        axios.get(`http://localhost:5000/api/journals/search`, { params: { lat: searchParams.lat, lng: searchParams.lng, distanceKm: searchParams.distance } })
+          .then(res => setJournals(res.data))
+          .catch(err => console.error(err));
+      }} style={{ display: 'none' }}>
+      </form>
+
       <div className="main-dashboard">
         {/* Left Column: Log Your Journey */}
         <div className="column-card">
           <h3 style={{ marginBottom: '15px' }}>Log Your Journey</h3>
           {token ? (
-            // Pass triggerNotification to Form to alert on success
             <JournalForm 
               onJournalAdded={() => {
                 fetchJournals();
@@ -141,7 +174,7 @@ export default function App() {
           <h3 style={{ marginBottom: '15px' }}>Global Travel Timeline</h3>
           <div className="timeline-list">
             {journals.map((journal) => (
-              <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer', position: 'relative' }}>
+              <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer' }}>
                 {journal.media_url ? <img src={journal.media_url} alt={journal.title} className="card-image" /> : <div style={{ height: '180px', background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Image</div>}
                 
                 <div className="card-content">
@@ -150,12 +183,10 @@ export default function App() {
                       By: {journal.creator_name || "Unknown"}
                     </span>
                     
-                    {/* Trashbin Button: Only visible to the owner */}
                     {token && parseInt(currentUserId) === journal.user_id && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleDelete(journal.id); }} 
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
-                        title="Delete Pin"
                       >
                         🗑️
                       </button>
@@ -165,11 +196,10 @@ export default function App() {
                   <h4 style={{ marginTop: '8px' }}>{journal.title}</h4>
                   <p style={{ color: '#555', fontSize: '14px' }}>{journal.content || "No description provided."}</p>
 
-                  {/* Edit Button: Opens up our newly created EditModal Popup */}
                   {token && parseInt(currentUserId) === journal.user_id && (
                     <button onClick={(e) => {
-                      e.stopPropagation(); // Prevents map flight
-                      setEditingJournal(journal); // Trigger Modal popup
+                      e.stopPropagation();
+                      setEditingJournal(journal);
                     }} style={{ background: '#ffc107', color: 'black', border: 'none', padding: '4px 10px', cursor: 'pointer', marginTop: '10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>
                       ✏️ Edit Trip
                     </button>
