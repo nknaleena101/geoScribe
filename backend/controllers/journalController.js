@@ -44,13 +44,12 @@ exports.getAllJournals = async (req, res) => {
   }
 };
 
-// 3. Update/Edit a Journal Entry (Protected - Only the owner can edit)
+// 3. Update/Edit a Journal Entry (Protected - Only owner can edit Title & Description)
 exports.updateJournal = async (req, res) => {
   try {
-    const { id } = req.params; // Journal ID from URL params
-    const { title, content, media_url, latitude, longitude } = req.body;
+    const { id } = req.params;
+    const { title, content, media_url, latitude, longitude } = req.body; // 'content' is our description
 
-    // First, check if the journal belongs to the logged-in user
     const checkQuery = `SELECT * FROM journals WHERE id = $1;`;
     const journalCheck = await pool.query(checkQuery, [id]);
 
@@ -58,12 +57,11 @@ exports.updateJournal = async (req, res) => {
       return res.status(404).json({ error: "Journal not found" });
     }
 
-    // Check if the current user is the actual owner
     if (journalCheck.rows[0].user_id !== req.userId) {
-      return res.status(403).json({ error: "Unauthorized! You can only edit your own pins." });
+      return res.status(403).json({ error: "Unauthorized!" });
     }
 
-    // Update the journal details
+    // Now updating both title and content (description)
     const updateQuery = `
       UPDATE journals 
       SET title = $1, content = $2, media_url = $3, location = ST_SetSRID(ST_MakePoint($4, $5), 4326)
@@ -93,6 +91,32 @@ exports.getNearbyJournals = async (req, res) => {
 `;
     const journals = await pool.query(query, [lng, lat, distanceKm]);
     res.status(200).json(journals.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 5. Delete a Journal Entry (Protected - Only owner can delete)
+exports.deleteJournal = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if journal exists
+    const checkQuery = `SELECT * FROM journals WHERE id = $1;`;
+    const journalCheck = await pool.query(checkQuery, [id]);
+
+    if (journalCheck.rows.length === 0) {
+      return res.status(404).json({ error: "Journal not found" });
+    }
+
+    // Check ownership
+    if (journalCheck.rows[0].user_id !== req.userId) {
+      return res.status(403).json({ error: "Unauthorized! You can only delete your own pins." });
+    }
+
+    // Delete query
+    await pool.query(`DELETE FROM journals WHERE id = $1;`, [id]);
+    res.status(200).json({ message: "Journal deleted successfully!" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

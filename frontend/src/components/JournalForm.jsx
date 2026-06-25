@@ -36,7 +36,7 @@ export default function JournalForm({ onJournalAdded, selectedCoords, token }) {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <h3>Log Your Journey</h3>
+      {/* <h3>Log Your Journey</h3> */}
       <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
       <textarea placeholder="Story..." value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} />
       <input type="text" placeholder="Media Image URL" value={formData.media_url} onChange={e => setFormData({...formData, media_url: e.target.value})} />

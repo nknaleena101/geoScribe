@@ -10,5 +10,6 @@ router.get('/journals/search', journalController.getNearbyJournals);
 // Protected Routes
 router.post('/journals', auth, journalController.createJournal);
 router.put('/journals/:id', auth, journalController.updateJournal);
+router.delete('/journals/:id', auth, journalController.deleteJournal);
 
 module.exports = router;
