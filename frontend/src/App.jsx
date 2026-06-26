@@ -6,6 +6,8 @@ import Auth from './components/Auth';
 import EditModal from './components/EditModal';
 import ProfileModal from './components/ProfileModal';
 import logoImg from './assets/GeoScribe.png';
+import { Trash } from 'lucide-react';
+import { TypeOutline } from 'lucide-react';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -19,9 +21,10 @@ export default function App() {
   const [notification, setNotification] = useState('');
   const [editingJournal, setEditingJournal] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
-  // 💡 State to toggle the floating Form panel on top of the Map
   const [showFormPanel, setShowFormPanel] = useState(false);
+
+  // 💡 State to track which journal card's three-dots menu is currently open
+  const [activeMenuId, setActiveMenuId] = useState(null);
 
   const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${token}` } });
 
@@ -66,6 +69,13 @@ export default function App() {
     setCurrentUserId(localStorage.getItem('userId'));
     setShowAuthModal(false);
   };
+
+  // Close menus automatically if clicking anywhere else on the screen
+  useEffect(() => {
+    const closeAllMenus = () => setActiveMenuId(null);
+    window.addEventListener('click', closeAllMenus);
+    return () => window.removeEventListener('click', closeAllMenus);
+  }, []);
 
   useEffect(() => {
     fetchJournals();
@@ -140,39 +150,31 @@ export default function App() {
       {/* Hidden Proximity Search Tracker */}
       <form onSubmit={(e) => { e.preventDefault(); }} style={{ display: 'none' }}></form>
 
-      {/* 2-Column Dashboard Layout (Left: Map, Right: Timeline) */}
+      {/* 2-Column Dashboard Layout */}
       <div className="main-dashboard">
-        
+
         {/* Left Side: Map with Floating Form Wrapper */}
         <div className="map-column-wrapper">
-          
-          {/* Conditional Rendering for Drop Pin Button or Floating Panel */}
           {!showFormPanel ? (
-            <button 
+            <button
               className="floating-drop-btn"
               onClick={() => {
-                if (!token) return setShowAuthModal(true); // Ask to login if not authenticated
+                if (!token) return setShowAuthModal(true);
                 setShowFormPanel(true);
               }}
             >
               📍 Drop Pin
             </button>
           ) : (
-            /* Floating Overlap Journal Form Panel */
             <div className="floating-form-panel">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <span style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 'bold' }}>Log Your Journey</span>
-                <button 
-                  onClick={() => setShowFormPanel(false)} 
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}
-                >
-                  ✕
-                </button>
+                <button onClick={() => setShowFormPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}>✕</button>
               </div>
               <JournalForm
                 onJournalAdded={() => {
                   fetchJournals();
-                  setShowFormPanel(false); // Close panel on success
+                  setShowFormPanel(false);
                   triggerNotification("🚀 New pin dropped successfully!");
                 }}
                 selectedCoords={selectedCoords}
@@ -181,54 +183,90 @@ export default function App() {
             </div>
           )}
 
-          {/* Leaflet Map Rendering inside wrapper */}
-          <MapView 
-            journals={journals} 
+          <MapView
+            journals={journals}
             onMapClick={(lat, lng) => {
               if (token) {
                 setSelectedCoords({ lat, lng });
-                setShowFormPanel(true); // Automatically open panel when map is clicked
+                setShowFormPanel(true);
               }
-            }} 
-            activeCoords={activeCoords} 
+            }}
+            activeCoords={activeCoords}
           />
         </div>
 
         {/* Right Side: Travel Timeline List */}
         <div className="timeline-column-card">
-          <h3 style={{ marginBottom: '15px', fontFamily: 'Georgia, serif', fontSize: '22px' }}>Travel Timeline</h3>
+          <h3 style={{ marginBottom: '20px', fontFamily: 'Instrument Serif', fontSize: '24px', fontWeight: 'normal' }}>Travel Timeline</h3>
           <div className="timeline-list">
             {journals.map((journal) => (
               <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer' }}>
-                {journal.media_url ? <img src={journal.media_url} alt={journal.title} className="card-image" /> : <div style={{ height: '140px', background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>No Image</div>}
 
+                {/* Left Side: Fixed Image or Placeholder Container */}
+                {journal.media_url ? (
+                  <img src={journal.media_url} alt={journal.title} className="card-image" />
+                ) : (
+                  <div className="no-image-placeholder">No Image</div>
+                )}
+
+                {/* Right Side: Text Context Block arranged horizontally */}
                 <div className="card-content">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ background: '#f0f0f0', color: '#333', padding: '4px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '500' }}>
-                      By: {journal.creator_name || "Unknown"}
+
+                  {/* 1. Title matching serif underlined style */}
+                  <h4 className="journal-title">{journal.title}</h4>
+
+                  {/* 2. Description restricted to 2 lines max */}
+                  <p className="journal-desc">{journal.content || "No description provided."}</p>
+
+                  {/* 3. Bottom Row: Author details & Three Dots Menu */}
+                  <div className="card-action-wrapper" onClick={(e) => e.stopPropagation()}>
+                    <span className="creator-tag">
+                      By: <strong>{journal.creator_name || "Unknown"}</strong>
                     </span>
 
+                    {/* Three Dots Action Button for Owner Validation */}
                     {token && parseInt(currentUserId) === journal.user_id && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleDelete(journal.id); }}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}
-                      >
-                        🗑️
-                      </button>
+                      <div style={{ position: 'relative' }}>
+                        <button
+                          className="three-dots-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === journal.id ? null : journal.id);
+                          }}
+                        >
+                          •••
+                        </button>
+
+                        {/* Context Overlay Menu */}
+                        {activeMenuId === journal.id && (
+                          <div className="action-dropdown-menu">
+                            <button
+                              className="dropdown-item"
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                setEditingJournal(journal);
+                              }}
+                            >
+                              <TypeOutline size={15} />
+                               Edit
+                            </button>
+                            <button
+                              className="dropdown-item"
+                              style={{ color: '#dc3545' }}
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                handleDelete(journal.id);
+                              }}
+                            >
+                              <Trash size={15} />
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
 
-                  <h4 style={{ marginTop: '10px', fontSize: '16px', fontFamily: 'Georgia, serif' }}>{journal.title}</h4>
-                  <p style={{ color: '#666', fontSize: '13px', lineHeight: '1.4', marginTop: '5px' }}>{journal.content || "No description provided."}</p>
-
-                  {token && parseInt(currentUserId) === journal.user_id && (
-                    <button onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingJournal(journal);
-                    }} style={{ background: '#f0f0f0', color: '#333', border: '1px solid #ccc', padding: '4px 10px', cursor: 'pointer', marginTop: '10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
-                      ✏️ Edit
-                    </button>
-                  )}
                 </div>
               </div>
             ))}
