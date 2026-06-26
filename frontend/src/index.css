@@ -230,6 +230,37 @@ form input:focus, form textarea:focus {
   align-items: center;
 }
 
+/* Custom Profile Pin Wrapper */
+.custom-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The Marker Pin Shape with Drop Shadow */
+.pin-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #007bff; /* Main Pin Color */
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% 50% 50% 0; /* Creates the map pin pointer shape */
+  transform: rotate(-45deg); /* Rotates to make the sharp point face down */
+  border: 2px solid white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Inside text needs to be rotated back so it stays upright */
+.pin-avatar span {
+  transform: rotate(45deg);
+  display: inline-block;
+}
+
 /* =================================================================*********
    RESPONSIVENESS / MEDIA QUERIES
    =================================================================********* */

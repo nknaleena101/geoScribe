@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import L from 'leaflet'; // 💡 Imported Leaflet globally to use L.divIcon
 
-// Component to handle map click events and pass coordinates up
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click: (e) => {
@@ -12,7 +12,6 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
-// Component to handle smooth camera flights when activeCoords change
 function RecenterMap({ activeCoords }) {
   const map = useMap();
 
@@ -29,7 +28,21 @@ function RecenterMap({ activeCoords }) {
 }
 
 export default function MapView({ journals, onMapClick, activeCoords }) {
-  const defaultCenter = [7.8731, 80.7718]; // Sri Lanka Center
+  const defaultCenter = [7.8731, 80.7718];
+
+  // 💡 Function to create a custom HTML/CSS Pin with User's First Character
+  const createCustomIcon = (creatorName) => {
+    // Get first character, default to 'U' if name is empty
+    const firstChar = creatorName ? creatorName.charAt(0).toUpperCase() : 'U';
+
+    return L.divIcon({
+      className: 'custom-pin', // Wrapper class
+      html: `<div class="pin-avatar"><span>${firstChar}</span></div>`, // HTML structure
+      iconSize: [36, 36], // Total size of the icon
+      iconAnchor: [18, 36], // Point of the icon which will correspond to marker's location (Bottom tip)
+      popupAnchor: [0, -36] // Point from which the popup should open relative to the iconAnchor
+    });
+  };
 
   return (
     <div className="map-container">
@@ -43,10 +56,13 @@ export default function MapView({ journals, onMapClick, activeCoords }) {
         <RecenterMap activeCoords={activeCoords} />
 
         {journals.map((journal) => (
-          <Marker key={journal.id} position={[parseFloat(journal.latitude), parseFloat(journal.longitude)]}>
+          <Marker 
+            key={journal.id} 
+            position={[parseFloat(journal.latitude), parseFloat(journal.longitude)]}
+            icon={createCustomIcon(journal.creator_name)} // 💡 Injected our custom avatar icon here!
+          >
             <Popup>
               <div style={{ minWidth: '150px' }}>
-                {/* 💡 Added: Displaying the creator's name inside the Map Popup */}
                 <span style={{ background: '#007bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold', display: 'inline-block', marginBottom: '5px' }}>
                   By: {journal.creator_name || "Unknown"}
                 </span>
