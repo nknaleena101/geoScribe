@@ -8,6 +8,8 @@ import ProfileModal from './components/ProfileModal';
 import logoImg from './assets/GeoScribe.png';
 import { Trash } from 'lucide-react';
 import { TypeOutline } from 'lucide-react';
+import { MapPin } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -163,13 +165,13 @@ export default function App() {
                 setShowFormPanel(true);
               }}
             >
-              📍 Drop Pin
+              <MapPin size={40} /> Drop <br /> Pin
             </button>
           ) : (
             <div className="floating-form-panel">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <span style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 'bold' }}>Log Your Journey</span>
-                <button onClick={() => setShowFormPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}>✕</button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingRight: '20px', paddingLeft: '20px', paddingTop: '10px' }}>
+                <span className='ffp-title'>Log Your Journey</span>
+                <button onClick={() => setShowFormPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}><X /></button>
               </div>
               <JournalForm
                 onJournalAdded={() => {

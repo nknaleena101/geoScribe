@@ -151,7 +151,8 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .map-column-wrapper {
   position: relative;
   background: white;
-  border-radius: 24px; /* Curved layout like the image */
+  border-radius: 47px; /* Curved layout like the image */
+  border: 2px solid #FFFFFF;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
@@ -159,36 +160,50 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 /* Floating Drop Pin Button Positioned on Top-Left of Map */
 .floating-drop-btn {
   position: absolute;
+  width: 126px;
+  height: 69px;
   top: 20px;
   left: 20px;
   z-index: 1000; /* Must stay above Leaflet maps */
   background-color: #007bff;
   color: white;
-  border: none;
+  border: 2px solid white;
   padding: 12px 20px;
-  border-radius: 16px;
-  font-family: 'Georgia', serif;
-  font-size: 16px;
+  border-radius: 37px;
+  font-family: 'Instrument Serif', serif;
+  font-size: 24px;
+  line-height: 22px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  transition: 0.4s;
+}
+
+.floating-drop-btn:hover{
+  background-color: #C4E0FF;
+  color: black;
 }
 
 /* Floating Overlap Journal Form Modal Box */
 .floating-form-panel {
   position: absolute;
-  top: 20px;
+  top: 35px;
   left: 20px;
   z-index: 1001; /* Higher than floating button */
-  background: rgba(255, 255, 255, 0.95); /* Slightly translucent white */
-  backdrop-filter: blur(10px); /* Premium blur background */
-  width: 320px;
-  padding: 20px;
-  border-radius: 20px;
+  background: #F5F5F5;
+  backdrop-filter: blur(10px);
+  width: 344px;
+  padding: 10px;
+  border-radius: 37px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   animation: fadeIn 0.2s ease-out;
+}
+
+.ffp-title{
+  font-family: 'Instrument Serif', serif;
+  font-size: 24px;
 }
 
 .map-container {
@@ -213,7 +228,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 
 .timeline-column-card > h3{
   padding-left: 20px;
-  padding-top: 10px;
+  padding-top: 20px;
 }
 
 .timeline-list {
@@ -514,7 +529,7 @@ form input:focus, form textarea:focus {
   width: 100%;
   padding: 6px 10px;
   font-size: 13px;
-  font-family: sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #666;
   cursor: pointer;
   border-radius: 8px;

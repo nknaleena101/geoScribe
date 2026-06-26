@@ -44,7 +44,7 @@ export default function JournalForm({ onJournalAdded, selectedCoords, token }) {
         <input type="number" step="any" placeholder="Longitude" value={formData.longitude} onChange={e => setFormData({...formData, longitude: e.target.value})} required />
       </div>
       
-      <button type="submit" style={{ background: '#007bff', color: 'white', border: 'none', padding: '12px', cursor: 'pointer', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', marginTop: '5px' }}>
+      <button type="submit" style={{ background: '#007bff', color: 'white', border: 'none', padding: '12px', cursor: 'pointer', borderRadius: '68px', fontSize: '20px', marginTop: '5px', fontFamily: 'Instrument Serif' }}>
         Drop Pin
       </button>
     </form>
