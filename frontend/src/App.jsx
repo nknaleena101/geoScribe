@@ -4,7 +4,8 @@ import MapView from './components/MapView';
 import JournalForm from './components/JournalForm';
 import Auth from './components/Auth';
 import EditModal from './components/EditModal';
-import ProfileModal from './components/ProfileModal'; // 👈 Imported our new ProfileModal
+import ProfileModal from './components/ProfileModal';
+import logoImg from './assets/GeoScribe.png';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -13,10 +14,10 @@ export default function App() {
   const [selectedCoords, setSelectedCoords] = useState(null);
   const [activeCoords, setActiveCoords] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  
+
   const [notification, setNotification] = useState('');
   const [editingJournal, setEditingJournal] = useState(null);
-  
+
   // New State to control Profile Modal visibility
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -79,21 +80,21 @@ export default function App() {
 
       {/* Edit Journey Popup Modal */}
       {editingJournal && (
-        <EditModal 
-          journal={editingJournal} 
+        <EditModal
+          journal={editingJournal}
           token={token}
-          onClose={() => setEditingJournal(null)} 
+          onClose={() => setEditingJournal(null)}
           onUpdateSuccess={() => {
             setEditingJournal(null);
             triggerNotification("📝 Journal updated successfully!");
             fetchJournals();
-          }} 
+          }}
         />
       )}
 
       {/* Profile Settings Popup Modal */}
       {showProfileModal && (
-        <ProfileModal 
+        <ProfileModal
           token={token}
           onClose={() => setShowProfileModal(false)}
           onProfileUpdate={() => {
@@ -104,24 +105,39 @@ export default function App() {
       )}
 
       {/* Navbar with Profile Icon Trigger */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 20px', background: '#343a40', color: 'white', alignItems: 'center' }}>
-        <h2>GeoScribe 📍</h2>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-          {token ? (
-            <>
-              {/* 💡 Profile Icon Button */}
-              <button 
-                onClick={() => setShowProfileModal(true)} 
-                style={{ background: 'none', border: 'none', color: 'white', fontSize: '20px', cursor: 'pointer' }}
-                title="Edit Profile"
-              >
-                👤
+      <div className="custom-navbar">
+        <div className="nav-container">
+
+          {/* Left Side Links */}
+          <div className="nav-group">
+            <button className="nav-item">Dashboard</button>
+            <button className="nav-item">Gallery</button>
+          </div>
+
+          {/* Middle Logo Component */}
+          <img src={logoImg} alt="GeoScribe Logo" className="nav-logo" />
+
+          {/* Right Side Links (Conditional rendering based on Auth Token) */}
+          <div className="nav-group">
+            {token ? (
+              <>
+                {/* Profile Button triggers your Profile Modal */}
+                <button className="nav-item" onClick={() => setShowProfileModal(true)}>
+                  Profile
+                </button>
+                {/* Logout Button triggers logout function */}
+                <button className="nav-item" onClick={handleLogout} style={{ color: 'black' }}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              /* If not logged in, show Sign In link */
+              <button className="nav-item" onClick={() => setShowAuthModal(true)} style={{ color: 'black' }}>
+                Sign In
               </button>
-              <button onClick={handleLogout} style={{ background: '#dc3545', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px' }}>Logout</button>
-            </>
-          ) : (
-            <button onClick={() => setShowAuthModal(true)} style={{ background: '#007bff', color: 'white', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px' }}>Sign In to Drop Pins</button>
-          )}
+            )}
+          </div>
+
         </div>
       </div>
 
@@ -149,13 +165,13 @@ export default function App() {
         <div className="column-card">
           <h3 style={{ marginBottom: '15px' }}>Log Your Journey</h3>
           {token ? (
-            <JournalForm 
+            <JournalForm
               onJournalAdded={() => {
                 fetchJournals();
                 triggerNotification("🚀 New pin dropped successfully!");
-              }} 
-              selectedCoords={selectedCoords} 
-              token={token} 
+              }}
+              selectedCoords={selectedCoords}
+              token={token}
             />
           ) : (
             <div style={{ textAlign: 'center', padding: '40px 10px' }}>
@@ -177,23 +193,23 @@ export default function App() {
             {journals.map((journal) => (
               <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer' }}>
                 {journal.media_url ? <img src={journal.media_url} alt={journal.title} className="card-image" /> : <div style={{ height: '180px', background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Image</div>}
-                
+
                 <div className="card-content">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ background: '#6c757d', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
                       By: {journal.creator_name || "Unknown"}
                     </span>
-                    
+
                     {token && parseInt(currentUserId) === journal.user_id && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDelete(journal.id); }} 
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDelete(journal.id); }}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
                       >
                         🗑️
                       </button>
                     )}
                   </div>
-                  
+
                   <h4 style={{ marginTop: '8px' }}>{journal.title}</h4>
                   <p style={{ color: '#555', fontSize: '14px' }}>{journal.content || "No description provided."}</p>
 

@@ -8,7 +8,7 @@
 }
 
 body {
-  background-color: #f8fafc;
+  background-color: #E8E8E8;
   color: #0f172a;
   height: 100vh;
   overflow: hidden;
@@ -259,6 +259,55 @@ form input:focus, form textarea:focus {
 .pin-avatar span {
   transform: rotate(45deg);
   display: inline-block;
+}
+
+/* Navbar Container Styles */
+.custom-navbar {
+  display: flex;
+  justify-content: center; /* Horizontally centers the entire inner content */
+  align-items: center;
+  padding: 20px 0 0 0;
+  width: 100%;
+}
+
+/* Nav Wrapper to keep everything lined up neatly */
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%; /* Limits maximum width for a clean look */
+  max-width: 1000px;
+}
+
+/* Grouping the Links */
+.nav-group {
+  display: flex;
+  gap: 20px; /* Space between navigation words */
+  align-items: center;
+  /* padding-right: 30px; */
+}
+
+/* Nav Item Typography */
+.nav-item {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  color: #000000;
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* padding: 5px 10px; */
+  transition: opacity 0.2s;
+}
+
+.nav-item:hover {
+  opacity: 0.6;
+}
+
+/* Center Logo Styles */
+.nav-logo {
+  height: 45px; /* Adjust height according to your logo aspect ratio */
+  object-fit: contain;
+  padding: 0 30px;
 }
 
 /* =================================================================*********
