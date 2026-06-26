@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export default function ProfileModal({ onClose, onProfileUpdate, token }) {
-  const [newName, setNewName] = useState('');
+  // 💡 Get current name from localStorage and set it as initial state
+  const [newName, setNewName] = useState(localStorage.getItem('userName') || '');
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
@@ -12,8 +13,12 @@ export default function ProfileModal({ onClose, onProfileUpdate, token }) {
         { name: newName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      
+      // 💡 Update the userName in localStorage with the new name
+      localStorage.setItem('userName', res.data.name);
+      
       alert("Profile updated successfully!");
-      onProfileUpdate(); // Refresh the journal feed to show the updated name on cards
+      onProfileUpdate(); 
       onClose();
     } catch (err) {
       console.error(err);

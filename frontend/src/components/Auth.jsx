@@ -20,6 +20,7 @@ export default function Auth({ onLoginSuccess }) {
       if (!isSignUp) {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('userId', res.data.user.id);
+        localStorage.setItem('userName', res.data.user.name);
         onLoginSuccess();
       } else {
         alert('Signed up successfully! Now Sign In.');

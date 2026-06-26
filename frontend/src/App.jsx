@@ -52,6 +52,7 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
     setToken(null);
     setCurrentUserId(null);
     fetchJournals();
