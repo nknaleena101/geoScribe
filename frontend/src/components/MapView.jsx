@@ -46,7 +46,7 @@ export default function MapView({ journals, onMapClick, activeCoords }) {
 
   return (
     <div className="map-container">
-      <MapContainer center={defaultCenter} zoom={7} style={{ height: '100%', width: '100%' }}>
+      <MapContainer center={defaultCenter} zoom={7} zoomControl={false} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -93,13 +93,15 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 .btn-secondary:hover { background: #e2e8f0; color: #0f172a; }
 .btn-secondary:active { transform: scale(0.98); }
 
-/* 3-Column Grid Layout */
+/* Main Dashboard: Split into Map (Left) and Timeline (Right) */
 .main-dashboard {
   display: grid;
-  grid-template-columns: 350px 1fr 380px;
-  height: calc(100vh - 146px);
-  gap: 24px;
-  padding: 24px 40px;
+  grid-template-columns: 2.5fr 1fr; /* Left is wider, right is narrower */
+  gap: 25px;
+  padding: 25px;
+  background-color: #e6e6e6; /* Matching the navbar light gray background */
+  height: calc(100vh - 80px); /* Fill the screen minus navbar height */
+  box-sizing: border-box;
 }
 
 .dashboard {
@@ -145,6 +147,50 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   height: 100%;
 }
 
+/* Map Wrapper: Keeps it absolute for the floating button and form */
+.map-column-wrapper {
+  position: relative;
+  background: white;
+  border-radius: 24px; /* Curved layout like the image */
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* Floating Drop Pin Button Positioned on Top-Left of Map */
+.floating-drop-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000; /* Must stay above Leaflet maps */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 16px;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Floating Overlap Journal Form Modal Box */
+.floating-form-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1001; /* Higher than floating button */
+  background: rgba(255, 255, 255, 0.95); /* Slightly translucent white */
+  backdrop-filter: blur(10px); /* Premium blur background */
+  width: 320px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  animation: fadeIn 0.2s ease-out;
+}
+
 .map-container {
   height: 100%; 
   width: 100%;
@@ -153,12 +199,42 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   position: relative;
   background-color: #e5e3df; 
 }
-/* Timeline Cards */
-.timeline-list {
+/* Timeline Column Card */
+.timeline-column-card {
+  background: white;
+  border-radius: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.timeline-list {
+  flex: 1;
+  overflow-y: auto; /* Makes timeline vertically scrollable */
+  padding-right: 5px;
+}
+
+/* Beautiful Inputs matching the popup screenshot */
+.floating-form-panel input, 
+.floating-form-panel textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #f0f0f0;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.floating-form-panel input:focus, 
+.floating-form-panel textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  background: white;
 }
 
 .journal-card {

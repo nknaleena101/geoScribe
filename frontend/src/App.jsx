@@ -11,15 +11,17 @@ export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('userId'));
   const [journals, setJournals] = useState([]);
+  const [searchParams, setSearchParams] = useState({ lat: '', lng: '', distance: 10 });
   const [selectedCoords, setSelectedCoords] = useState(null);
   const [activeCoords, setActiveCoords] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const [notification, setNotification] = useState('');
   const [editingJournal, setEditingJournal] = useState(null);
-
-  // New State to control Profile Modal visibility
   const [showProfileModal, setShowProfileModal] = useState(false);
+
+  // 💡 State to toggle the floating Form panel on top of the Map
+  const [showFormPanel, setShowFormPanel] = useState(false);
 
   const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${token}` } });
 
@@ -99,49 +101,33 @@ export default function App() {
           onClose={() => setShowProfileModal(false)}
           onProfileUpdate={() => {
             triggerNotification("👤 Profile name updated successfully!");
-            fetchJournals(); // Refresh timeline list to display the new name
+            fetchJournals();
           }}
         />
       )}
 
-      {/* Navbar with Profile Icon Trigger */}
+      {/* Navbar Structure */}
       <div className="custom-navbar">
         <div className="nav-container">
-
-          {/* Left Side Links */}
           <div className="nav-group">
             <button className="nav-item">Dashboard</button>
             <button className="nav-item">Gallery</button>
           </div>
-
-          {/* Middle Logo Component */}
           <img src={logoImg} alt="GeoScribe Logo" className="nav-logo" />
-
-          {/* Right Side Links (Conditional rendering based on Auth Token) */}
           <div className="nav-group">
             {token ? (
               <>
-                {/* Profile Button triggers your Profile Modal */}
-                <button className="nav-item" onClick={() => setShowProfileModal(true)}>
-                  Profile
-                </button>
-                {/* Logout Button triggers logout function */}
-                <button className="nav-item" onClick={handleLogout} style={{ color: 'black' }}>
-                  Logout
-                </button>
+                <button className="nav-item" onClick={() => setShowProfileModal(true)}>Profile</button>
+                <button className="nav-item" onClick={handleLogout} style={{ color: 'black' }}>Logout</button>
               </>
             ) : (
-              /* If not logged in, show Sign In link */
-              <button className="nav-item" onClick={() => setShowAuthModal(true)} style={{ color: 'black' }}>
-                Sign In
-              </button>
+              <button className="nav-item" onClick={() => setShowAuthModal(true)} style={{ color: 'black' }}>Sign In</button>
             )}
           </div>
-
         </div>
       </div>
 
-      {/* Auth Screen Modal */}
+      {/* Auth Modal */}
       {showAuthModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ background: 'white', padding: '20px', borderRadius: '8px', position: 'relative' }}>
@@ -152,81 +138,103 @@ export default function App() {
       )}
 
       {/* Hidden Proximity Search Tracker */}
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        axios.get(`http://localhost:5000/api/journals/search`, { params: { lat: searchParams.lat, lng: searchParams.lng, distanceKm: searchParams.distance } })
-          .then(res => setJournals(res.data))
-          .catch(err => console.error(err));
-      }} style={{ display: 'none' }}>
-      </form>
+      <form onSubmit={(e) => { e.preventDefault(); }} style={{ display: 'none' }}></form>
 
+      {/* 2-Column Dashboard Layout (Left: Map, Right: Timeline) */}
       <div className="main-dashboard">
-        {/* Left Column: Log Your Journey */}
-        <div className="column-card">
-          <h3 style={{ marginBottom: '15px' }}>Log Your Journey</h3>
-          {token ? (
-            <JournalForm
-              onJournalAdded={() => {
-                fetchJournals();
-                triggerNotification("🚀 New pin dropped successfully!");
+        
+        {/* Left Side: Map with Floating Form Wrapper */}
+        <div className="map-column-wrapper">
+          
+          {/* Conditional Rendering for Drop Pin Button or Floating Panel */}
+          {!showFormPanel ? (
+            <button 
+              className="floating-drop-btn"
+              onClick={() => {
+                if (!token) return setShowAuthModal(true); // Ask to login if not authenticated
+                setShowFormPanel(true);
               }}
-              selectedCoords={selectedCoords}
-              token={token}
-            />
+            >
+              📍 Drop Pin
+            </button>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px 10px' }}>
-              <h4>Want to log your journey?</h4>
-              <button onClick={() => setShowAuthModal(true)} style={{ background: '#007bff', color: 'white', border: 'none', padding: '10px 20px', cursor: 'pointer', marginTop: '10px', borderRadius: '4px' }}>Sign In Now</button>
+            /* Floating Overlap Journal Form Panel */
+            <div className="floating-form-panel">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <span style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 'bold' }}>Log Your Journey</span>
+                <button 
+                  onClick={() => setShowFormPanel(false)} 
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}
+                >
+                  ✕
+                </button>
+              </div>
+              <JournalForm
+                onJournalAdded={() => {
+                  fetchJournals();
+                  setShowFormPanel(false); // Close panel on success
+                  triggerNotification("🚀 New pin dropped successfully!");
+                }}
+                selectedCoords={selectedCoords}
+                token={token}
+              />
             </div>
           )}
+
+          {/* Leaflet Map Rendering inside wrapper */}
+          <MapView 
+            journals={journals} 
+            onMapClick={(lat, lng) => {
+              if (token) {
+                setSelectedCoords({ lat, lng });
+                setShowFormPanel(true); // Automatically open panel when map is clicked
+              }
+            }} 
+            activeCoords={activeCoords} 
+          />
         </div>
 
-        {/* Middle Column: Map View */}
-        <div className="map-column">
-          <MapView journals={journals} onMapClick={(lat, lng) => token && setSelectedCoords({ lat, lng })} activeCoords={activeCoords} />
-        </div>
-
-        {/* Right Column: Travel Timeline */}
-        <div className="column-card">
-          <h3 style={{ marginBottom: '15px' }}>Global Travel Timeline</h3>
+        {/* Right Side: Travel Timeline List */}
+        <div className="timeline-column-card">
+          <h3 style={{ marginBottom: '15px', fontFamily: 'Georgia, serif', fontSize: '22px' }}>Travel Timeline</h3>
           <div className="timeline-list">
             {journals.map((journal) => (
               <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer' }}>
-                {journal.media_url ? <img src={journal.media_url} alt={journal.title} className="card-image" /> : <div style={{ height: '180px', background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No Image</div>}
+                {journal.media_url ? <img src={journal.media_url} alt={journal.title} className="card-image" /> : <div style={{ height: '140px', background: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>No Image</div>}
 
                 <div className="card-content">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ background: '#6c757d', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
+                    <span style={{ background: '#f0f0f0', color: '#333', padding: '4px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '500' }}>
                       By: {journal.creator_name || "Unknown"}
                     </span>
 
                     {token && parseInt(currentUserId) === journal.user_id && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(journal.id); }}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}
                       >
                         🗑️
                       </button>
                     )}
                   </div>
 
-                  <h4 style={{ marginTop: '8px' }}>{journal.title}</h4>
-                  <p style={{ color: '#555', fontSize: '14px' }}>{journal.content || "No description provided."}</p>
+                  <h4 style={{ marginTop: '10px', fontSize: '16px', fontFamily: 'Georgia, serif' }}>{journal.title}</h4>
+                  <p style={{ color: '#666', fontSize: '13px', lineHeight: '1.4', marginTop: '5px' }}>{journal.content || "No description provided."}</p>
 
                   {token && parseInt(currentUserId) === journal.user_id && (
                     <button onClick={(e) => {
                       e.stopPropagation();
                       setEditingJournal(journal);
-                    }} style={{ background: '#ffc107', color: 'black', border: 'none', padding: '4px 10px', cursor: 'pointer', marginTop: '10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>
-                      ✏️ Edit Trip
+                    }} style={{ background: '#f0f0f0', color: '#333', border: '1px solid #ccc', padding: '4px 10px', cursor: 'pointer', marginTop: '10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
+                      ✏️ Edit
                     </button>
                   )}
                 </div>
-
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
