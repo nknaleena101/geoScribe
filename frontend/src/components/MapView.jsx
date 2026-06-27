@@ -62,12 +62,9 @@ export default function MapView({ journals, onMapClick, activeCoords }) {
             icon={createCustomIcon(journal.creator_name)}
           >
             <Popup minWidth={280}>
-              {/* 💡 Premium styled wrapper matching your exact screen specification */}
               <div className="premium-popup-card">
 
-                {/* Top Section: Media Container with Image & Overlays */}
                 <div className="popup-media-container">
-                  {/* Floating Creator Name Tag */}
                   <div className="popup-author-tag">
                     By: {journal.creator_name || "Unknown"}
                   </div>
