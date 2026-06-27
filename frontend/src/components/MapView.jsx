@@ -6,7 +6,7 @@ function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click: (e) => {
       const { lat, lng } = e.latlng;
-      onMapClick(lat, lng); 
+      onMapClick(lat, lng);
     },
   });
   return null;
@@ -51,27 +51,43 @@ export default function MapView({ journals, onMapClick, activeCoords }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         <MapClickHandler onMapClick={onMapClick} />
         <RecenterMap activeCoords={activeCoords} />
 
         {journals.map((journal) => (
-          <Marker 
-            key={journal.id} 
+          <Marker
+            key={journal.id}
             position={[parseFloat(journal.latitude), parseFloat(journal.longitude)]}
-            icon={createCustomIcon(journal.creator_name)} // 💡 Injected our custom avatar icon here!
+            icon={createCustomIcon(journal.creator_name)}
           >
-            <Popup>
-              <div style={{ minWidth: '150px' }}>
-                <span style={{ background: '#007bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold', display: 'inline-block', marginBottom: '5px' }}>
-                  By: {journal.creator_name || "Unknown"}
-                </span>
-                
-                {journal.media_url && (
-                  <img src={journal.media_url} alt={journal.title} style={{ width: '100%', borderRadius: '4px', marginTop: '5px' }} />
-                )}
-                <h4 style={{ margin: '5px 0 2px 0' }}>{journal.title}</h4>
-                <p style={{ margin: '0', color: '#555', fontSize: '12px' }}>{journal.content}</p>
+            <Popup minWidth={280}>
+              {/* 💡 Premium styled wrapper matching your exact screen specification */}
+              <div className="premium-popup-card">
+
+                {/* Top Section: Media Container with Image & Overlays */}
+                <div className="popup-media-container">
+                  {/* Floating Creator Name Tag */}
+                  <div className="popup-author-tag">
+                    By: {journal.creator_name || "Unknown"}
+                  </div>
+
+                  {journal.media_url ? (
+                    <img src={journal.media_url} alt={journal.title} className="popup-card-image" />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>No Image</div>
+                  )}
+
+                  {/* Smooth black gradient mask covering the lower image half */}
+                  <div className="popup-gradient-overlay"></div>
+                </div>
+
+                {/* Bottom Section: Text Descriptions */}
+                <div className="popup-text-content">
+                  <h4 className="popup-title">{journal.title}</h4>
+                  <p className="popup-description">{journal.content || "No description provided."}</p>
+                </div>
+
               </div>
             </Popup>
           </Marker>

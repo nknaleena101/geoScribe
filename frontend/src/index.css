@@ -237,7 +237,6 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   padding-bottom: 80px; /* 💡 Added safety scrolling space for the last card's dropdown */
 }
 
-/* Beautiful Inputs matching the popup screenshot */
 .floating-form-panel input, 
 .floating-form-panel textarea {
   width: 100%;
@@ -540,6 +539,100 @@ form input:focus, form textarea:focus {
 .dropdown-item:hover {
   background: #f5f5f5;
   color: #333;
+}
+
+/* 💡 Customizing Leaflet's Default Popup Wrapper styling */
+.leaflet-popup-content-wrapper {
+  background: transparent !important; /* Removes the default white background */
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip-container {
+  display: none !important; /* Removes the default bottom arrow tip */
+}
+
+.leaflet-popup-content {
+  margin: 0 !important; /* Removes default inner margins */
+}
+
+/* Close button custom positioning inside the card */
+.leaflet-container a.leaflet-popup-close-button {
+  color: #ffffff !important;
+  font-size: 20px !important;
+  padding: 12px 12px 0 0 !important;
+  z-index: 10002;
+}
+
+/* 🖼️ The Real Premium Popup Card Design */
+.premium-popup-card {
+  width: 280px;
+  background-color: #000000; /* Rich black base */
+  border-radius: 24px; /* Perfectly curved border matching your screenshot */
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Top Media Container with Image and Gradient Overlay */
+.popup-media-container {
+  position: relative;
+  width: 100%;
+  height: 180px;
+}
+
+.popup-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dark gradient overlay going from transparent at top to solid black at bottom */
+.popup-gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #000000 100%);
+}
+
+/* Floating Author Tag on Top Left of Image */
+.popup-author-tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: 'Georgia', serif;
+}
+
+/* Bottom Text Content padding specifications */
+.popup-text-content {
+  padding: 15px 20px 20px 20px;
+  background-color: #000000;
+}
+
+.popup-title {
+  margin: 0 0 10px 0;
+  font-family: 'Georgia', serif;
+  font-size: 24px;
+  font-weight: normal;
+  color: #ffffff;
+}
+
+.popup-description {
+  margin: 0;
+  color: #bbbbbb;
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: sans-serif;
 }
 
 /* =================================================================*********
