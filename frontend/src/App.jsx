@@ -194,12 +194,15 @@ export default function App() {
               }
             }}
             activeCoords={activeCoords}
+            token={token}
+            currentUserId={currentUserId}
           />
+
         </div>
 
         {/* Right Side: Travel Timeline List */}
         <div className="timeline-column-card">
-          <h3 style={{ marginBottom: '25px', fontFamily: 'Georgia, serif', fontSize: '24px', fontWeight: 'normal' }}>Travel Timeline</h3>
+          <h3 style={{ marginBottom: '20px', fontFamily: 'Instrument Serif', fontSize: '24px', fontWeight: 'normal' }}>Travel Timeline</h3>
           <div className="timeline-list">
             {journals.map((journal) => (
               <div
@@ -227,8 +230,7 @@ export default function App() {
 
                   {/* 3. Bottom Row: Author details & Three Dots Menu */}
                   <div className="card-action-wrapper">
-
-                    {/* 💡 Updated Component: Conditional check for "By: You" logic */}
+                    {/* 💡 Updated Component: Shows 'You' if the logged-in user is the owner */}
                     <span className="creator-tag">
                       By: <strong>
                         {token && parseInt(currentUserId) === journal.user_id
@@ -243,7 +245,7 @@ export default function App() {
                         <button
                           className="three-dots-btn"
                           onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation(); // 💡 Prevents map flight when opening the menu
                             setActiveMenuId(activeMenuId === journal.id ? null : journal.id);
                           }}
                         >
@@ -254,7 +256,7 @@ export default function App() {
                         {activeMenuId === journal.id && (
                           <div
                             className="action-dropdown-menu"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()} // 💡 Prevents closing menu when clicking inside it
                           >
                             <button
                               className="dropdown-item"
@@ -262,7 +264,8 @@ export default function App() {
                                 setEditingJournal(journal);
                               }}
                             >
-                              📝 Edit
+                              <TypeOutline size={15} />
+                              Edit
                             </button>
                             <button
                               className="dropdown-item"
@@ -271,7 +274,8 @@ export default function App() {
                                 handleDelete(journal.id);
                               }}
                             >
-                              🗑️ Delete
+                              <Trash size={15} />
+                              Delete
                             </button>
                           </div>
                         )}
