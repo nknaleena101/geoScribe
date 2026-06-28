@@ -613,7 +613,7 @@ form input:focus, form textarea:focus {
   padding: 4px 14px;
   border-radius: 20px;
   font-size: 13px;
-  font-family: 'inter', serif;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Bottom Text Content padding specifications */
@@ -635,7 +635,91 @@ form input:focus, form textarea:focus {
   color: #bbbbbb;
   font-size: 13px;
   line-height: 1.5;
-  font-family: 'inter', sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Auth Component Container overrides */
+.auth-card-panel {
+  width: 340px;
+  background: #f5f5f5; /* Soft premium gray background matching the image */
+  border-radius: 47px; /* High curvature border radius */
+  padding: 30px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+/* Header Text style matching Instrument Serif */
+.auth-title {
+  margin: 0 0 20px 0;
+  font-family: 'Instrument Serif', serif; /* Or Instrument Serif if imported */
+  font-size: 30px;
+  font-weight: normal;
+  color: #000000;
+}
+
+/* Beautiful Rounded White Input Textboxes */
+.auth-input {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border: 1px solid #eaeaea;
+  background: #ffffff;
+  border-radius: 17px; /* Curved text field borders */
+  box-sizing: border-box;
+  font-size: 20px;
+  color: #000000/60;
+  font-weight: 400;
+}
+
+.auth-input::placeholder {
+  color: #888;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Main Pill-shaped Action Button */
+.auth-submit-btn {
+  width: 100%;
+  background-color: #007bff; /* Vibrant Blue */
+  color: white;
+  padding: 14px;
+  border: 2px solid white;
+  border-radius: 17px;
+  font-family: 'Instrument Serif', sans-serif;
+  font-size: 24px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  transition: 0.4s;
+}
+
+.auth-submit-btn:hover {
+  background-color: #C4E0FF;
+  color: black;
+}
+
+/* Lower Toggle Footer Link */
+.auth-toggle-text {
+  text-align: center;
+  font-size: 14px;
+  color: #666666;
+}
+
+.auth-toggle-link {
+  background: none;
+  border: none;
+  color: #000000;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.auth-toggle-link:hover {
+  text-decoration: underline;
 }
 
 /* =================================================================*********

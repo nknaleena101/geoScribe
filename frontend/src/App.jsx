@@ -140,11 +140,16 @@ export default function App() {
         </div>
       </div>
 
-      {/* Auth Modal */}
+      {/* Auth Screen Modal Container Wrapper */}
       {showAuthModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ background: 'white', padding: '20px', borderRadius: '8px', position: 'relative' }}>
-            <button onClick={() => setShowAuthModal(false)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>❌</button>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(5px)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowAuthModal(false)}
+              style={{ position: 'absolute', top: '30px', right: '30px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#333', zIndex: 10 }}
+            >
+              <X />
+            </button>
             <Auth onLoginSuccess={handleLoginSuccess} />
           </div>
         </div>
