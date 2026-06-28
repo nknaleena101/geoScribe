@@ -17,7 +17,7 @@ export default function ProfileModal({ onClose, onProfileUpdate, token }) {
       // 💡 Update the userName in localStorage with the new name
       localStorage.setItem('userName', res.data.name);
       
-      alert("Profile updated successfully!");
+      // alert("Profile updated successfully!");
       onProfileUpdate(); 
       onClose();
     } catch (err) {

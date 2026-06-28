@@ -96,7 +96,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
 /* Main Dashboard: Split into Map (Left) and Timeline (Right) */
 .main-dashboard {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Left is wider, right is narrower */
+  grid-template-columns: 2fr 0.85fr; /* Left is wider, right is narrower */
   gap: 25px;
   padding: 25px;
   background-color: #e6e6e6; /* Matching the navbar light gray background */
@@ -312,7 +312,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   color: #2D2D2D;
   padding: 2px 8px;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 400;
   margin-left: 4px;
 }
 
@@ -560,6 +560,7 @@ form input:focus, form textarea:focus {
 /* Close button custom positioning inside the card */
 .leaflet-container a.leaflet-popup-close-button {
   color: #ffffff !important;
+  mix-blend-mode: difference;
   font-size: 25px !important;
   padding: 20px 40px 0 0 !important;
   z-index: 10002;
