@@ -6,6 +6,7 @@ import Auth from './components/Auth';
 import EditModal from './components/EditModal';
 import ProfileModal from './components/ProfileModal';
 import logoImg from './assets/GeoScribe.png';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Trash } from 'lucide-react';
 import { TypeOutline } from 'lucide-react';
 import { MapPin } from 'lucide-react';
@@ -157,33 +158,56 @@ export default function App() {
 
         {/* Left Side: Map with Floating Form Wrapper */}
         <div className="map-column-wrapper">
-          {!showFormPanel ? (
-            <button
-              className="floating-drop-btn"
-              onClick={() => {
-                if (!token) return setShowAuthModal(true);
-                setShowFormPanel(true);
-              }}
-            >
-              <MapPin size={40} /> Drop <br /> Pin
-            </button>
-          ) : (
-            <div className="floating-form-panel">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingRight: '20px', paddingLeft: '20px', paddingTop: '10px' }}>
-                <span className='ffp-title'>Log Your Journey</span>
-                <button onClick={() => setShowFormPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}><X /></button>
-              </div>
-              <JournalForm
-                onJournalAdded={() => {
-                  fetchJournals();
-                  setShowFormPanel(false);
-                  triggerNotification("🚀 New pin dropped successfully!");
+
+          {/* Wrap with AnimatePresence to handle exit animations smoothly */}
+          <AnimatePresence mode="wait">
+            {!showFormPanel ? (
+              <motion.button
+                key="drop-btn"
+                className="floating-drop-btn"
+                onClick={() => {
+                  if (!token) return setShowAuthModal(true);
+                  setShowFormPanel(true);
                 }}
-                selectedCoords={selectedCoords}
-                token={token}
-              />
-            </div>
-          )}
+                whileHover={{ scale: 1.05 }} // Smooth scale up on hover
+                whileTap={{ scale: 0.95 }}   // Click effect
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+              >
+                <MapPin size={40} /> Drop <br /> Pin
+              </motion.button>
+            ) : (
+              /* Animated Floating Form Panel using framer-motion */
+              <motion.div
+                key="form-panel"
+                className="floating-form-panel"
+                initial={{ opacity: 0, y: 15, scale: 0.95 }}   // Start state (Hidden + slightly down)
+                animate={{ opacity: 1, y: 0, scale: 1 }}       // Active state (Fade in + slide up)
+                exit={{ opacity: 0, y: 15, scale: 0.95 }}      // Exit state when closed
+                transition={{ type: "spring", stiffness: 800, damping: 25 }} // Clean premium spring feel
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingRight: '20px', paddingLeft: '20px', paddingTop: '10px' }}>
+                  <span className='ffp-title'>Log Your Journey</span>
+                  <button
+                    onClick={() => setShowFormPanel(false)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}
+                  >
+                    <X />
+                  </button>
+                </div>
+                <JournalForm
+                  onJournalAdded={() => {
+                    fetchJournals();
+                    setShowFormPanel(false);
+                    triggerNotification("🚀 New pin dropped successfully!");
+                  }}
+                  selectedCoords={selectedCoords}
+                  token={token}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <MapView
             journals={journals}
@@ -197,7 +221,6 @@ export default function App() {
             token={token}
             currentUserId={currentUserId}
           />
-
         </div>
 
         {/* Right Side: Travel Timeline List */}
