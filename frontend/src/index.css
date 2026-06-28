@@ -641,11 +641,11 @@ form input:focus, form textarea:focus {
 /* Auth Component Container overrides */
 .auth-card-panel {
   width: 340px;
-  background: #f5f5f5; /* Soft premium gray background matching the image */
+  background: #F5F5F5; /* Soft premium gray background matching the image */
   border-radius: 47px; /* High curvature border radius */
+  border: 2px solid white;
   padding: 30px;
   box-sizing: border-box;
-  font-family: sans-serif;
 }
 
 /* Header Text style matching Instrument Serif */
@@ -660,11 +660,12 @@ form input:focus, form textarea:focus {
 /* Beautiful Rounded White Input Textboxes */
 .auth-input {
   width: 100%;
-  padding: 14px 18px;
+  padding: 17px;
   margin-bottom: 10px;
   border: 1px solid #eaeaea;
   background: #ffffff;
   border-radius: 17px; /* Curved text field borders */
+  border: 2px solid #F1F1F1;
   box-sizing: border-box;
   font-size: 20px;
   color: #000000/60;
@@ -720,6 +721,28 @@ form input:focus, form textarea:focus {
 
 .auth-toggle-link:hover {
   text-decoration: underline;
+}
+
+/* Profile Modal Wrapper styling to lock the design consistency */
+.profile-card-panel {
+  width: 340px;
+  background: #f5f5f5; /* Light soft gray background matching screenshot */
+  border-radius: 47px; /* High curvature borders */
+  border: 2px solid white;
+  padding: 30px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  position: relative;
+}
+
+/* Label text field typography */
+.profile-input-label {
+  display: block;
+  font-size: 20px;
+  color: #000000;
+  margin-bottom: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
 }
 
 /* =================================================================*********

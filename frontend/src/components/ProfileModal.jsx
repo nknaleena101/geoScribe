@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { X } from 'lucide-react';
 
 export default function ProfileModal({ onClose, onProfileUpdate, token }) {
   // 💡 Get current name from localStorage and set it as initial state
@@ -27,26 +28,37 @@ export default function ProfileModal({ onClose, onProfileUpdate, token }) {
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', zIndex: 10000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ background: 'white', padding: '25px', borderRadius: '12px', width: '350px', boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
-        <h3 style={{ marginBottom: '15px' }}>Edit Profile Settings</h3>
-        <form onSubmit={handleProfileSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <label>Update Your Name:</label>
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(5px)', zIndex: 10000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      
+      <div className="profile-card-panel">
+        <button 
+          onClick={onClose} 
+          style={{ position: 'absolute', top: '30px', right: '30px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: '#4B4B4B', zIndex: 10 }}
+        >
+          <X />
+        </button>
+
+        <h3 className="auth-title">Edit Profile Settings</h3>
+        
+        <form onSubmit={handleProfileSubmit}>
+          <label className="profile-input-label">Update your name:</label>
+          
           <input 
             type="text" 
             placeholder="Enter new profile name" 
             value={newName} 
             onChange={(e) => setNewName(e.target.value)} 
             required 
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} 
+            className="auth-input"
           />
           
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-            <button type="button" onClick={onClose} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
-            <button type="submit" style={{ background: '#007bff', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer' }}>Update Name</button>
-          </div>
+          {/* Centered Pill Shape Save Action Button */}
+          <button type="submit" className="auth-submit-btn" style={{ margin: '10px 0 0 0' }}>
+            Save
+          </button>
         </form>
       </div>
+
     </div>
   );
 }
