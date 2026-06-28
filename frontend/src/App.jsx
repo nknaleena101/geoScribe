@@ -199,10 +199,15 @@ export default function App() {
 
         {/* Right Side: Travel Timeline List */}
         <div className="timeline-column-card">
-          <h3 style={{ marginBottom: '20px', fontFamily: 'Instrument Serif', fontSize: '24px', fontWeight: 'normal' }}>Travel Timeline</h3>
+          <h3 style={{ marginBottom: '25px', fontFamily: 'Georgia, serif', fontSize: '24px', fontWeight: 'normal' }}>Travel Timeline</h3>
           <div className="timeline-list">
             {journals.map((journal) => (
-              <div key={journal.id} className="journal-card" onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })} style={{ cursor: 'pointer' }}>
+              <div
+                key={journal.id}
+                className="journal-card"
+                onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })}
+                style={{ cursor: 'pointer' }}
+              >
 
                 {/* Left Side: Fixed Image or Placeholder Container */}
                 {journal.media_url ? (
@@ -221,9 +226,15 @@ export default function App() {
                   <p className="journal-desc">{journal.content || "No description provided."}</p>
 
                   {/* 3. Bottom Row: Author details & Three Dots Menu */}
-                  <div className="card-action-wrapper" onClick={(e) => e.stopPropagation()}>
+                  <div className="card-action-wrapper">
+
+                    {/* 💡 Updated Component: Conditional check for "By: You" logic */}
                     <span className="creator-tag">
-                      By: <strong>{journal.creator_name || "Unknown"}</strong>
+                      By: <strong>
+                        {token && parseInt(currentUserId) === journal.user_id
+                          ? "You"
+                          : (journal.creator_name || "Unknown")}
+                      </strong>
                     </span>
 
                     {/* Three Dots Action Button for Owner Validation */}
@@ -241,27 +252,26 @@ export default function App() {
 
                         {/* Context Overlay Menu */}
                         {activeMenuId === journal.id && (
-                          <div className="action-dropdown-menu">
+                          <div
+                            className="action-dropdown-menu"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <button
                               className="dropdown-item"
                               onClick={() => {
-                                setActiveMenuId(null);
                                 setEditingJournal(journal);
                               }}
                             >
-                              <TypeOutline size={15} />
-                               Edit
+                              📝 Edit
                             </button>
                             <button
                               className="dropdown-item"
                               style={{ color: '#dc3545' }}
                               onClick={() => {
-                                setActiveMenuId(null);
                                 handleDelete(journal.id);
                               }}
                             >
-                              <Trash size={15} />
-                              Delete
+                              🗑️ Delete
                             </button>
                           </div>
                         )}
