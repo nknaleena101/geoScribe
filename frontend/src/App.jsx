@@ -6,7 +6,7 @@ import Auth from './components/Auth';
 import EditModal from './components/EditModal';
 import ProfileModal from './components/ProfileModal';
 import logoImg from './assets/GeoScribe.png';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence} from 'framer-motion';
 import { Trash } from 'lucide-react';
 import { TypeOutline } from 'lucide-react';
 import { MapPin } from 'lucide-react';
@@ -26,7 +26,6 @@ export default function App() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showFormPanel, setShowFormPanel] = useState(false);
 
-  // 💡 State to track which journal card's three-dots menu is currently open
   const [activeMenuId, setActiveMenuId] = useState(null);
 
   const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${token}` } });
@@ -142,7 +141,7 @@ export default function App() {
 
       {/* Auth Screen Modal Container Wrapper */}
       {showAuthModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(5px)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="auth-overlay">
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setShowAuthModal(false)}

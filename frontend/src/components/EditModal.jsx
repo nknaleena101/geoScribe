@@ -21,8 +21,8 @@ export default function EditModal({ journal, onClose, onUpdateSuccess, token }) 
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', zIndex: 10000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ background: 'white', padding: '25px', borderRadius: '12px', width: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
+    <div className="edit-modal-overlay">
+      <div className="edit-modal-panel">
         <h3 style={{ marginBottom: '15px' }}>Edit Your Journey</h3>
         <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <label>Title:</label>

@@ -28,7 +28,7 @@ export default function ProfileModal({ onClose, onProfileUpdate, token }) {
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(5px)', zIndex: 10000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div className="profile-overlay">
       
       <div className="profile-card-panel">
         <button 

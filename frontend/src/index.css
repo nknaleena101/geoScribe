@@ -10,8 +10,8 @@
 body {
   background-color: #E8E8E8;
   color: #0f172a;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6, .brand-font {
@@ -100,7 +100,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   gap: 25px;
   padding: 25px;
   background-color: #e6e6e6; /* Matching the navbar light gray background */
-  height: calc(100vh - 80px); /* Fill the screen minus navbar height */
+  min-height: calc(100vh - 80px); /* Fill the screen minus navbar height */
   box-sizing: border-box;
 }
 
@@ -292,6 +292,7 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   color: #676767;
   font-size: 14px;
   line-height: 1;
+  line-clamp: 2;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Truncates long text smoothly to 2 lines */
   -webkit-box-orient: vertical;
@@ -640,7 +641,7 @@ form input:focus, form textarea:focus {
 
 /* Auth Component Container overrides */
 .auth-card-panel {
-  width: 340px;
+  width: min(340px, calc(100vw - 32px));
   background: #F5F5F5; /* Soft premium gray background matching the image */
   border-radius: 47px; /* High curvature border radius */
   border: 2px solid white;
@@ -725,7 +726,7 @@ form input:focus, form textarea:focus {
 
 /* Profile Modal Wrapper styling to lock the design consistency */
 .profile-card-panel {
-  width: 340px;
+  width: min(340px, calc(100vw - 32px));
   background: #f5f5f5; /* Light soft gray background matching screenshot */
   border-radius: 47px; /* High curvature borders */
   border: 2px solid white;
@@ -745,6 +746,30 @@ form input:focus, form textarea:focus {
   font-weight: 300;
 }
 
+.edit-modal-overlay,
+.auth-overlay,
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(5px);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.edit-modal-panel {
+  width: min(400px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
 /* =================================================================*********
    RESPONSIVENESS / MEDIA QUERIES
    =================================================================********* */
@@ -752,9 +777,13 @@ form input:focus, form textarea:focus {
 /* Laptops / Smaller Desktops */
 @media (max-width: 1200px) {
   .main-dashboard {
-    grid-template-columns: 300px 1fr 300px;
+    grid-template-columns: 1fr 320px;
     gap: 16px;
     padding: 20px;
+  }
+
+  .nav-container {
+    width: 92%;
   }
 }
 
@@ -765,10 +794,38 @@ form input:focus, form textarea:focus {
     overflow: auto;
   }
 
+  .custom-navbar {
+    padding: 14px 0 0;
+  }
+
+  .nav-container {
+    width: calc(100% - 24px);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-logo {
+    order: -1;
+    width: 100%;
+    padding: 0;
+    height: 40px;
+  }
+
+  .nav-group {
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-item {
+    font-size: 18px;
+  }
+
   .main-dashboard {
     grid-template-columns: 1fr;
     height: auto;
     min-height: calc(100vh - 146px);
+    padding-bottom: 20px;
   }
 
   .map-column {
@@ -776,18 +833,63 @@ form input:focus, form textarea:focus {
     min-height: 400px;
   }
 
-  .column-card {
+  .timeline-column-card {
     height: auto;
     max-height: none;
     overflow-y: visible;
+  }
+
+  .timeline-list {
+    overflow-y: visible;
+  }
+
+  .journal-card {
+    align-items: flex-start;
+  }
+
+  .card-image {
+    width: 220px;
+    max-height: 150px;
+  }
+
+  .floating-form-panel {
+    width: min(344px, calc(100vw - 40px));
   }
 }
 
 /* Mobile Screens */
 @media (max-width: 600px) {
+  .custom-navbar {
+    padding-top: 12px;
+  }
+
+  .nav-container {
+    width: calc(100% - 20px);
+    gap: 8px;
+  }
+
+  .nav-group {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .nav-item {
+    font-size: 16px;
+  }
+
+  .nav-logo {
+    height: 34px;
+  }
+
   .main-dashboard {
     padding: 15px 10px;
     gap: 15px;
+  }
+
+  .map-column-wrapper,
+  .timeline-column-card {
+    border-radius: 28px;
   }
 
   .map-column {
@@ -796,12 +898,157 @@ form input:focus, form textarea:focus {
     border-radius: 12px;
   }
 
-  .column-card {
-    padding: 16px;
+  .floating-drop-btn {
+    width: auto;
+    height: auto;
+    top: 14px;
+    left: 14px;
+    padding: 10px 14px;
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  .floating-form-panel {
+    top: 14px;
+    left: 14px;
+    width: calc(100vw - 28px);
+    border-radius: 28px;
+    padding: 12px;
+  }
+
+  .ffp-title {
+    font-size: 20px;
+  }
+
+  .journal-card {
+    flex-direction: column;
+    border-radius: 28px;
+    padding: 12px;
+  }
+
+  .card-image,
+  .no-image-placeholder {
+    width: 100%;
+    max-width: none;
+    border-radius: 24px;
+  }
+
+  .card-image {
+    height: 180px;
+    max-height: none;
+  }
+
+  .no-image-placeholder {
+    height: 180px;
   }
 
   .card-content h4 {
+    font-size: 18px;
+  }
+
+  .card-content p {
+    font-size: 13px;
+  }
+
+  .card-action-wrapper {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .creator-tag {
+    font-size: 12px;
+  }
+
+  .premium-popup-card {
+    width: min(280px, calc(100vw - 32px));
+  }
+
+  .popup-media-container {
+    height: 160px;
+  }
+
+  .popup-title {
     font-size: 20px;
+  }
+
+  .popup-description {
+    font-size: 12px;
+  }
+
+  .auth-card-panel,
+  .profile-card-panel,
+  .edit-modal-panel {
+    width: calc(100vw - 24px);
+    padding: 22px;
+    border-radius: 30px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+  }
+
+  .auth-input {
+    font-size: 16px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .auth-submit-btn {
+    font-size: 20px;
+  }
+
+  .profile-input-label {
+    font-size: 16px;
+  }
+
+  .floating-form-panel input,
+  .floating-form-panel textarea,
+  form input,
+  form textarea {
+    font-size: 16px;
+  }
+
+  .floating-form-panel div[style*='gap: 10px'] {
+    flex-direction: column;
+  }
+
+  .floating-form-panel button[type='submit'],
+  .auth-submit-btn {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 420px) {
+  .main-dashboard {
+    padding: 12px 8px;
+    gap: 12px;
+  }
+
+  .nav-group {
+    justify-content: center;
+  }
+
+  .nav-item {
+    font-size: 15px;
+  }
+
+  .floating-drop-btn {
+    padding: 8px 12px;
+    font-size: 16px;
+  }
+
+  .timeline-column-card > h3 {
+    padding-left: 10px;
+    padding-top: 14px;
+    font-size: 20px;
+  }
+
+  .card-content h4 {
+    font-size: 18px;
+  }
+
+  .card-content p {
+    font-size: 12px;
   }
 }
 
