@@ -7,10 +7,7 @@ import EditModal from './components/EditModal';
 import ProfileModal from './components/ProfileModal';
 import logoImg from './assets/GeoScribe.png';
 import { motion, AnimatePresence} from 'framer-motion';
-import { Trash } from 'lucide-react';
-import { TypeOutline } from 'lucide-react';
-import { MapPin } from 'lucide-react';
-import { X } from 'lucide-react';
+import { Trash, TypeOutline, MapPin, X } from 'lucide-react';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -72,7 +69,6 @@ export default function App() {
     setShowAuthModal(false);
   };
 
-  // Close menus automatically if clicking anywhere else on the screen
   useEffect(() => {
     const closeAllMenus = () => setActiveMenuId(null);
     window.addEventListener('click', closeAllMenus);
@@ -84,10 +80,10 @@ export default function App() {
   }, []);
 
   return (
-    <div>
+    <div className="app-root-container">
       {/* Notification Banner */}
       {notification && (
-        <div style={{ position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', background: '#333', color: 'white', padding: '12px 24px', borderRadius: '30px', zIndex: 10001, boxShadow: '0 4px 10px rgba(0,0,0,0.3)', fontWeight: 'bold' }}>
+        <div className="notification-banner">
           {notification}
         </div>
       )}
@@ -130,10 +126,10 @@ export default function App() {
             {token ? (
               <>
                 <button className="nav-item" onClick={() => setShowProfileModal(true)}>Profile</button>
-                <button className="nav-item" onClick={handleLogout} style={{ color: 'black' }}>Logout</button>
+                <button className="nav-item logout-btn" onClick={handleLogout}>Logout</button>
               </>
             ) : (
-              <button className="nav-item" onClick={() => setShowAuthModal(true)} style={{ color: 'black' }}>Sign In</button>
+              <button className="nav-item signin-btn" onClick={() => setShowAuthModal(true)}>Sign In</button>
             )}
           </div>
         </div>
@@ -142,11 +138,8 @@ export default function App() {
       {/* Auth Screen Modal Container Wrapper */}
       {showAuthModal && (
         <div className="auth-overlay">
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={() => setShowAuthModal(false)}
-              style={{ position: 'absolute', top: '30px', right: '30px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#333', zIndex: 10 }}
-            >
+          <div className="auth-modal-wrapper">
+            <button className="auth-close-btn" onClick={() => setShowAuthModal(false)}>
               <X />
             </button>
             <Auth onLoginSuccess={handleLoginSuccess} />
@@ -154,16 +147,13 @@ export default function App() {
         </div>
       )}
 
-      {/* Hidden Proximity Search Tracker */}
       <form onSubmit={(e) => { e.preventDefault(); }} style={{ display: 'none' }}></form>
 
-      {/* 2-Column Dashboard Layout */}
+      {/* Dashboard Layout Container */}
       <div className="main-dashboard">
 
-        {/* Left Side: Map with Floating Form Wrapper */}
+        {/* Left Side: Map Container */}
         <div className="map-column-wrapper">
-
-          {/* Wrap with AnimatePresence to handle exit animations smoothly */}
           <AnimatePresence mode="wait">
             {!showFormPanel ? (
               <motion.button
@@ -173,31 +163,27 @@ export default function App() {
                   if (!token) return setShowAuthModal(true);
                   setShowFormPanel(true);
                 }}
-                whileHover={{ scale: 1.05 }} // Smooth scale up on hover
-                whileTap={{ scale: 0.95 }}   // Click effect
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
               >
-                <MapPin size={40} /> Drop <br /> Pin
+                <MapPin size={35} /> Drop <br /> Pin
               </motion.button>
             ) : (
-              /* Animated Floating Form Panel using framer-motion */
               <motion.div
                 key="form-panel"
                 className="floating-form-panel"
-                initial={{ opacity: 0, y: 15, scale: 0.95 }}   // Start state (Hidden + slightly down)
-                animate={{ opacity: 1, y: 0, scale: 1 }}       // Active state (Fade in + slide up)
-                exit={{ opacity: 0, y: 15, scale: 0.95 }}      // Exit state when closed
-                transition={{ type: "spring", stiffness: 800, damping: 25 }} // Clean premium spring feel
+                initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 800, damping: 25 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingRight: '20px', paddingLeft: '20px', paddingTop: '10px' }}>
+                <div className="form-panel-header">
                   <span className='ffp-title'>Log Your Journey</span>
-                  <button
-                    onClick={() => setShowFormPanel(false)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#6c757d' }}
-                  >
-                    <X />
+                  <button className="form-close-btn" onClick={() => setShowFormPanel(false)}>
+                    <X size={18} />
                   </button>
                 </div>
                 <JournalForm
@@ -227,37 +213,27 @@ export default function App() {
           />
         </div>
 
-        {/* Right Side: Travel Timeline List */}
+        {/* Right Side: Travel Timeline Card */}
         <div className="timeline-column-card">
-          <h3 style={{ marginBottom: '20px', fontFamily: 'Instrument Serif', fontSize: '24px', fontWeight: 'normal' }}>Travel Timeline</h3>
+          <h3 className="timeline-header">Travel Timeline</h3>
           <div className="timeline-list">
             {journals.map((journal) => (
               <div
                 key={journal.id}
                 className="journal-card"
                 onClick={() => setActiveCoords({ lat: parseFloat(journal.latitude), lng: parseFloat(journal.longitude) })}
-                style={{ cursor: 'pointer' }}
               >
-
-                {/* Left Side: Fixed Image or Placeholder Container */}
                 {journal.media_url ? (
                   <img src={journal.media_url} alt={journal.title} className="card-image" />
                 ) : (
                   <div className="no-image-placeholder">No Image</div>
                 )}
 
-                {/* Right Side: Text Context Block arranged horizontally */}
                 <div className="card-content">
-
-                  {/* 1. Title matching serif underlined style */}
                   <h4 className="journal-title">{journal.title}</h4>
-
-                  {/* 2. Description restricted to 2 lines max */}
                   <p className="journal-desc">{journal.content || "No description provided."}</p>
 
-                  {/* 3. Bottom Row: Author details & Three Dots Menu */}
                   <div className="card-action-wrapper">
-                    {/* 💡 Updated Component: Shows 'You' if the logged-in user is the owner */}
                     <span className="creator-tag">
                       By: <strong>
                         {token && parseInt(currentUserId) === journal.user_id
@@ -266,50 +242,31 @@ export default function App() {
                       </strong>
                     </span>
 
-                    {/* Three Dots Action Button for Owner Validation */}
                     {token && parseInt(currentUserId) === journal.user_id && (
-                      <div style={{ position: 'relative' }}>
+                      <div className="three-dots-container">
                         <button
                           className="three-dots-btn"
                           onClick={(e) => {
-                            e.stopPropagation(); // 💡 Prevents map flight when opening the menu
+                            e.stopPropagation();
                             setActiveMenuId(activeMenuId === journal.id ? null : journal.id);
                           }}
                         >
                           •••
                         </button>
 
-                        {/* Context Overlay Menu */}
                         {activeMenuId === journal.id && (
-                          <div
-                            className="action-dropdown-menu"
-                            onClick={(e) => e.stopPropagation()} // 💡 Prevents closing menu when clicking inside it
-                          >
-                            <button
-                              className="dropdown-item"
-                              onClick={() => {
-                                setEditingJournal(journal);
-                              }}
-                            >
-                              <TypeOutline size={15} />
-                              Edit
+                          <div className="action-dropdown-menu" onClick={(e) => e.stopPropagation()}>
+                            <button className="dropdown-item" onClick={() => setEditingJournal(journal)}>
+                              <TypeOutline size={15} /> Edit
                             </button>
-                            <button
-                              className="dropdown-item"
-                              style={{ color: '#dc3545' }}
-                              onClick={() => {
-                                handleDelete(journal.id);
-                              }}
-                            >
-                              <Trash size={15} />
-                              Delete
+                            <button className="dropdown-item delete-item" onClick={() => handleDelete(journal.id)}>
+                              <Trash size={15} /> Delete
                             </button>
                           </div>
                         )}
                       </div>
                     )}
                   </div>
-
                 </div>
               </div>
             ))}

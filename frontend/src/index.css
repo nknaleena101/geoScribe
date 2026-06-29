@@ -774,86 +774,150 @@ form input:focus, form textarea:focus {
    RESPONSIVENESS / MEDIA QUERIES
    =================================================================********* */
 
-/* Laptops / Smaller Desktops */
+/* 1. Laptops & Smaller Desktops */
 @media (max-width: 1200px) {
   .main-dashboard {
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1.8fr 1.2fr; /* Shifts ratio slightly */
     gap: 16px;
-    padding: 20px;
+    padding: 16px;
   }
-
   .nav-container {
-    width: 92%;
+    width: 90%;
+  }
+  .card-image {
+    width: 180px; /* Reduces image size slightly on smaller desktops */
+    height: 120px;
+    border-radius: 24px;
   }
 }
 
-/* Tablets (Portrait & Landscape) */
+/* 2. Tablets (Portrait & Landscape) */
 @media (max-width: 992px) {
-  /* Give body back its scroll so it's not trapped on mobile/tablet */
   body {
-    overflow: auto;
+    overflow-y: auto; /* Allows page scrolling when layout stacks */
   }
 
+  .main-dashboard {
+    grid-template-columns: 1fr; /* Stacks Map on TOP, Timeline on BOTTOM */
+    grid-template-rows: 55vh auto; /* Map takes 55% screen height, timeline takes rest */
+    gap: 20px;
+    padding: 16px;
+    height: auto; /* Unlocks fixed height constraint */
+  }
+
+  .map-column-wrapper {
+    border-radius: 32px; /* Softens aggressive curve on smaller screen sizes */
+    height: 100%;
+  }
+
+  .timeline-column-card {
+    border-radius: 32px;
+    max-height: 700px; /* Caps height so it doesn't stretch infinitely */
+  }
+
+  /* Adjusting navbar alignment so elements don't crush */
+  .nav-container {
+    width: 95%;
+    gap: 10px;
+  }
+  /* Inside @media (max-width: 992px) block: Replace these two classes */
+  .journal-card {
+    flex-direction: column; /* 💡 Turned into column early to save text from clipping */
+    align-items: stretch;
+    border-radius: 32px;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .card-image {
+    width: 100%; /* 💡 Spans full card horizontal width smoothly */
+    height: 180px;
+    max-height: none;
+    border-radius: 24px;
+  }
+}
+
+/* 3. Small Mobile Devices (The ultimate fix for your screenshot) */
+@media (max-width: 680px) {
+  /* Navbar Overlap Prevention Strategy */
   .custom-navbar {
-    padding: 14px 0 0;
+    padding: 12px 0;
+    background-color: #e6e6e6;
   }
 
   .nav-container {
-    width: calc(100% - 24px);
-    flex-wrap: wrap;
-    gap: 12px;
+    flex-direction: column; /* Stacks Navbar Links above/below Logo */
+    gap: 14px;
+    width: 100%;
   }
 
   .nav-logo {
-    order: -1;
-    width: 100%;
     padding: 0;
-    height: 40px;
+    height: 35px; /* Sizers down logo slightly */
   }
 
   .nav-group {
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 25px;
   }
 
   .nav-item {
     font-size: 18px;
   }
 
-  .main-dashboard {
-    grid-template-columns: 1fr;
-    height: auto;
-    min-height: calc(100vh - 146px);
-    padding-bottom: 20px;
-  }
-
-  .map-column {
-    height: 50vh; /* Give map a fixed height on tablet */
-    min-height: 400px;
-  }
-
-  .timeline-column-card {
-    height: auto;
-    max-height: none;
-    overflow-y: visible;
-  }
-
-  .timeline-list {
-    overflow-y: visible;
-  }
-
-  .journal-card {
-    align-items: flex-start;
-  }
-
-  .card-image {
-    width: 220px;
-    max-height: 150px;
-  }
-
+  /* Form panel centering on tiny viewports */
   .floating-form-panel {
-    width: min(344px, calc(100vw - 40px));
+    width: calc(100% - 32px); /* Spans across screen width nicely with gutters */
+    left: 16px;
+    top: 16px;
+    border-radius: 24px;
+  }
+
+  /* 💡 Journal Card Conversion: Changes Horizontal Layout into Stacked Vertical Layout */
+  .journal-card {
+    flex-direction: column; /* Vertical alignment! Image atop text descriptions */
+    align-items: stretch;
+    border-radius: 32px;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  /* Fixed size image scaling up to fill card viewport horizontally */
+  .card-image, .no-image-placeholder {
+    width: 100%; /* Spans full card horizontal width */
+    height: 180px; /* Fixed height ratio */
+    border-radius: 24px;
+  }
+
+  .card-content {
+    padding: 4px 4px 0 4px;
+  }
+
+  .journal-title {
+    font-size: 22px;
+  }
+
+  .journal-desc {
+    font-size: 13px;
+    margin-top: 6px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  /* Drop Pin Button Resizing for mobile optimization */
+  .floating-drop-btn {
+    width: 95px;
+    height: 52px;
+    font-size: 18px;
+    line-height: 16px;
+    padding: 6px 12px;
+    border-radius: 24px;
+    top: 12px;
+    left: 12px;
+  }
+  
+  .floating-drop-btn svg {
+    width: 24px; /* Scales down lucide icon sizing */
+    height: 24px;
   }
 }
 
@@ -868,10 +932,10 @@ form input:focus, form textarea:focus {
     gap: 8px;
   }
 
-  .nav-group {
+.nav-group {
     width: 100%;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: center; /* 💡 Centers navigation links neatly below the logo */
+    gap: 20px;
   }
 
   .nav-item {
