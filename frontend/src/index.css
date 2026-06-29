@@ -661,16 +661,15 @@ form input:focus, form textarea:focus {
 /* Beautiful Rounded White Input Textboxes */
 .auth-input {
   width: 100%;
-  padding: 17px;
+  padding: 15px 16px;
   margin-bottom: 10px;
-  border: 1px solid #eaeaea;
   background: #ffffff;
-  border-radius: 17px; /* Curved text field borders */
+  border-radius: 16px; 
   border: 2px solid #F1F1F1;
   box-sizing: border-box;
-  font-size: 20px;
+  font-size: 16px;
   color: #000000/60;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .auth-input::placeholder {
@@ -761,13 +760,28 @@ form input:focus, form textarea:focus {
 }
 
 .edit-modal-panel {
-  width: min(400px, calc(100vw - 32px));
-  max-height: calc(100vh - 32px);
-  overflow-y: auto;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  width: 340px; 
+  background: #f5f5f5; 
+  border-radius: 47px;
+  border: 2px solid white;
+  padding: 30px 20px 20px 20px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  position: relative;
+}
+
+.edit-modal-panel h3{
+  font-size: 30px;
+}
+
+.edit-input-label {
+  display: block;
+  font-size: 16px;
+  color: #555555;
+  margin-bottom: 8px;
+  margin-top: 4px;
+  font-family: 'Inter', sans-serif;
+  font-weight: normal;
 }
 
 /* Gallery Main Layout Wrapper */
@@ -869,6 +883,35 @@ form input:focus, form textarea:focus {
   color: #333333;
 }
 
+/* Ensure the wrapper is relative so the absolute close button anchors to it */
+.auth-modal-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Beautifully Absolute Positioned Close Button on Top Right Corner */
+.auth-close-btn {
+  position: absolute;
+  top: 32px;    /* Matches the spacing of your auth title panel */
+  right: 30px;  /* Pushes it perfectly to the right side edge */
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 50%;
+  z-index: 100; /* Ensures it stays clickable above the input panels */
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Premium hover micro-interaction effect */
+.auth-close-btn:hover {
+  background-color: #e0e0e0;
+  color: #333333;
+}
 /* =================================================================*********
    RESPONSIVENESS FOR GALLERY GRID
    =================================================================********* */

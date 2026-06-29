@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { X } from 'lucide-react';
 
 export default function EditModal({ journal, onClose, onUpdateSuccess, token }) {
   const [title, setTitle] = useState(journal.title);
@@ -22,21 +23,44 @@ export default function EditModal({ journal, onClose, onUpdateSuccess, token }) 
 
   return (
     <div className="edit-modal-overlay">
-      <div className="edit-modal-panel">
-        <h3 style={{ marginBottom: '15px' }}>Edit Your Journey</h3>
-        <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <label>Title:</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          
-          <label>Description:</label>
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} rows="4" style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
-          
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-            <button type="button" onClick={onClose} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
-            <button type="submit" style={{ background: '#28a745', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer' }}>Save Changes</button>
-          </div>
-        </form>
-      </div>
-    </div>
+  <div className="edit-modal-panel">
+    
+    <button 
+      type="button"
+      onClick={onClose} 
+      style={{ position: 'absolute', top: '30px', right: '30px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#333', zIndex: 10 }}
+    >
+      <X />
+    </button>
+
+    <h3 className="auth-title">Edit Your Journey</h3>
+    
+    <form onSubmit={handleUpdate}>
+      
+      <label className="edit-input-label">Title:</label>
+      <input 
+        type="text" 
+        value={title} 
+        onChange={(e) => setTitle(e.target.value)} 
+        required 
+        className="auth-input" 
+      />
+      
+      <label className="edit-input-label">Description:</label>
+      <textarea 
+        value={content} 
+        onChange={(e) => setContent(e.target.value)} 
+        rows="4" 
+        className="auth-input"
+        style={{ resize: 'none' }}
+      />
+      
+      <button type="submit" className="auth-submit-btn" style={{ margin: '15px 0 0 0' }}>
+        Save Changes
+      </button>
+
+    </form>
+  </div>
+</div>
   );
 }
