@@ -609,8 +609,8 @@ form input:focus, form textarea:focus {
   position: absolute;
   top: 20px;
   left: 15px;
-  background: #000000;
-  color: #ffffff;
+  background: white;
+  color: black;
   padding: 4px 14px;
   border-radius: 20px;
   font-size: 13px;
@@ -768,6 +768,120 @@ form input:focus, form textarea:focus {
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Gallery Main Layout Wrapper */
+.gallery-container {
+  background-color: #F5F5F5;
+  border-radius: 47px;
+  border: 2px solid #FFFFFF;
+  padding: 30px;
+  margin: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  min-height: calc(100vh - 130px);
+}
+
+.gallery-main-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 32px;
+  margin-bottom: 25px;
+  padding-left: 10px;
+}
+
+/* Fluid Grid System: 4 Columns on desktop, automatically wraps on smaller views */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* Individual Gallery Card (Reuses your premium popup structures) */
+.premium-gallery-card {
+  background-color: #000000;
+  border-radius: 37px;
+  border: 2px solid white;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.premium-gallery-card:hover {
+  transform: scale(1.02);
+}
+
+/* Absolute Delete X overlay matching mockup top right corner */
+.gallery-card-delete-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.gallery-card-delete-btn:hover {
+  opacity: 1;
+}
+
+.gallery-empty-state {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  color: #666;
+  padding: 8px 0;
+}
+
+/* Header Container for Title and Close Button */
+.form-panel-header {
+  display: flex;
+  justify-content: space-between; /* Pushes Title to left and Close Button to right */
+  align-items: center;            /* Centers them vertically in the same row */
+  width: 100%;
+  padding: 10px 20px 15px 20px;   /* Added padding matching your mockup inner spaces */
+  box-sizing: border-box;
+}
+
+/* Beautiful Minimalist Close Button Layout */
+.form-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Subtle hover effect for premium quality look */
+.form-close-btn:hover {
+  background-color: #e0e0e0;
+  color: #333333;
+}
+
+/* =================================================================*********
+   RESPONSIVENESS FOR GALLERY GRID
+   =================================================================********* */
+@media (max-width: 1200px) {
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); } /* 3 Columns on small laptops */
+}
+@media (max-width: 902px) {
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); } /* 2 Columns on tablets */
+  .gallery-container { border-radius: 32px; padding: 20px; }
+}
+@media (max-width: 550px) {
+  .gallery-grid { grid-template-columns: 1fr; } /* 1 Column on mobiles */
+  .premium-gallery-card { border-radius: 28px; }
 }
 
 /* =================================================================*********
